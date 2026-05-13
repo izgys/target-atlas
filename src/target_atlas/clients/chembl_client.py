@@ -151,37 +151,98 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
 
 def _fetch_drug_mechanisms(chembl_target_id: str) -> list[Inhibitor]:
     """
-    Fetch approved drugs for a ChEMBL target.
-
-    Queries the mechanism endpoint filtering by target — returns drugs
-    with a known mechanism of action against this specific target.
+    Fetch approved drugs (max_phase=4) for a ChEMBL target.
+    Filters at query level — only returns Phase 4 approved drugs.
+    Names are fetched separately from the molecule endpoint.
     """
     with httpx.Client(timeout=15.0) as client:
+
+        # Step 1 — get approved mechanisms only (max_phase=4 at query level)
         response = client.get(
             f"{CHEMBL_API}/mechanism",
             params={
                 "target_chembl_id": chembl_target_id,
+                "max_phase": 4,
                 "format": "json",
                 "limit": 50,
             },
             follow_redirects=True,
         )
         response.raise_for_status()
-        data = response.json()
+        mechanisms = response.json().get("mechanisms", [])
 
-    mechanisms = data.get("mechanisms", [])
+        if not mechanisms:
+            return []
+
+        # Step 2 — collect unique molecule IDs and their mechanisms
+        molecule_mechanisms = {}
+        for m in mechanisms:
+            chembl_id = m.get("molecule_chembl_id")
+            if chembl_id and chembl_id not in molecule_mechanisms:
+                molecule_mechanisms[chembl_id] = m.get("mechanism_of_action")
+
+        # Step 3 — fetch preferred names from molecule endpoint
+        ids_str = ",".join(molecule_mechanisms.keys())
+        response = client.get(
+            f"{CHEMBL_API}/molecule",
+            params={
+                "molecule_chembl_id__in": ids_str,
+                "format": "json",
+                "limit": 100,
+            },
+            follow_redirects=True,
+        )
+        response.raise_for_status()
+        molecules = response.json().get("molecules", [])
+
+        # Build name lookup
+        name_lookup = {
+            m["molecule_chembl_id"]: m.get("pref_name") or m["molecule_chembl_id"]
+            for m in molecules
+        }
+
+    # Step 4 — build Inhibitor list
     drugs = []
-
-    for m in mechanisms:
-        chembl_id = m.get("molecule_chembl_id", "")
-        name = m.get("molecule_name") or chembl_id
-        mechanism = m.get("mechanism_of_action")
-
-        if chembl_id:
-            drugs.append(Inhibitor(
-                chembl_id=chembl_id,
-                name=name,
-                mechanism=mechanism,
-            ))
+    for chembl_id, mechanism in molecule_mechanisms.items():
+        drugs.append(Inhibitor(
+            chembl_id=chembl_id,
+            name=name_lookup.get(chembl_id, chembl_id),
+            mechanism=mechanism,
+        ))
 
     return drugs
+
+def _fetch_approved_molecule_names(
+    chembl_ids: list[str],
+    client: httpx.Client
+) -> dict[str, str]:
+    """
+    Fetch preferred names for a list of ChEMBL molecule IDs.
+    Filters to approved drugs only (max_phase=4).
+
+    Returns:
+        dict mapping chembl_id -> preferred_name for approved drugs only
+    """
+    # ChEMBL supports filtering by multiple IDs using the __in operator
+    ids_str = ";".join(chembl_ids)
+
+    response = client.get(
+        f"{CHEMBL_API}/molecule",
+        params={
+            "molecule_chembl_id__in": ids_str,
+            "max_phase": 4,
+            "format": "json",
+            "limit": 100,
+        },
+        follow_redirects=True,
+    )
+    response.raise_for_status()
+    data = response.json()
+
+    molecules = data.get("molecules", [])
+    return {
+        m["molecule_chembl_id"]: (
+            m.get("pref_name") or m["molecule_chembl_id"]
+        )
+        for m in molecules
+    }
