@@ -6,13 +6,12 @@
 
 ---
 
-> Given a protein target, Target Atlas retrieves and synthesises structural,
-> bioactivity, and literature evidence — producing a calibrated druggability
-> assessment with explicit confidence levels and reasoning trace in minutes.
+**Target Atlas** takes a UniProt ID or gene name and produces a calibrated druggability assessment — synthesising structural, bioactivity, and literature evidence from five sources into a structured report with explicit confidence levels and reasoning trace.
 
 ```bash
 # Analyse any human protein target by UniProt ID or gene name
 python -m target_atlas.cli run --target EGFR
+
 # Output: results/EGFR/report.md + results/EGFR/summary.json
 ```
 
