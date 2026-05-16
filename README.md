@@ -6,6 +6,25 @@
 
 ---
 
+> Given a protein target, Target Atlas retrieves and synthesises structural,
+> bioactivity, and literature evidence — producing a calibrated druggability
+> assessment with explicit confidence levels and reasoning trace in minutes.
+
+```bash
+# Analyse any human protein target by UniProt ID or gene name
+python -m target_atlas.cli run --target EGFR
+# Output: results/EGFR/report.md + results/EGFR/summary.json
+```
+
+**What makes it technically interesting:**
+- Multi-agent LangGraph pipeline — five specialised agents with shared state and independent failure isolation
+- Synthesises five heterogeneous sources — UniProt, PDB, AlphaFold, ChEMBL, PubMed — into one structured assessment
+- Calibrated confidence scoring — structural, chemical, and literature confidence scored independently before synthesis
+- Honest uncertainty — evidence gaps explicitly enumerated, not silently omitted
+- Production-minded — config-driven (Hydra), experiment tracked (MLflow), Docker packaged, CI tested
+
+---
+
 ## The Problem
 
 Early target selection is one of the most consequential decisions in drug discovery. Committing to a protein target implies years of work and hundreds of millions of dollars — yet the decision is routinely made by synthesising heterogeneous evidence from structural databases, bioactivity repositories, and the primary literature by hand.
