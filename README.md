@@ -258,10 +258,10 @@ target-atlas/
 - [x] PDB client — resolution-ranked structure retrieval
 - [x] AlphaFold client — pLDDT confidence fractions
 - [x] ChEMBL client — bioactivity summary + approved drugs
-- [ ] PubMed client — recent publications and disease context
-- [ ] LangGraph graph — all five agent nodes wired
-- [ ] Reasoning agent — Claude API with structured output
+- [x] PubMed client — recent publications and disease context
+- [x] Reasoning agent — Claude API with structured output
 - [ ] Report generator — markdown + JSON outputs
+- [ ] LangGraph graph — all five agent nodes wired
 - [ ] Hydra config system
 - [ ] MLflow experiment tracking
 - [ ] Dockerfile
