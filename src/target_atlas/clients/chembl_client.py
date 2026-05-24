@@ -63,49 +63,45 @@ def fetch_approved_drugs(uniprot_id: str) -> list[Inhibitor]:
 def _resolve_chembl_target_id(uniprot_id: str) -> str | None:
     """
     Resolve a UniProt accession to a ChEMBL target ID.
-
-    ChEMBL uses its own internal target identifiers (e.g. CHEMBL203).
-    This function bridges the two identifier systems.
-
-    Returns:
-        ChEMBL target ID string, or None if not found
+    Retries once on 500 errors — transient server failures are common.
     """
-    with httpx.Client(timeout=15.0) as client:
-        response = client.get(
-            f"{CHEMBL_API}/target",
-            params={
-                "target_components__accession": uniprot_id,
-                "format": "json",
-                "limit": 1,
-            }
-        )
-        response.raise_for_status()
-        data = response.json()
-
-    targets = data.get("targets", [])
-    if not targets:
-        return None
-
-    return targets[0].get("target_chembl_id")
+    import time
+    
+    for attempt in range(2):  # try twice
+        with httpx.Client(timeout=60.0) as client:
+            response = client.get(
+                f"{CHEMBL_API}/target",
+                params={
+                    "target_components__accession": uniprot_id,
+                    "format": "json",
+                    "limit": 1,
+                },
+                follow_redirects=True,
+            )
+            
+            if response.status_code == 500 and attempt == 0:
+                time.sleep(2)  # wait 2 seconds and retry
+                continue
+                
+            response.raise_for_status()
+            data = response.json()
+            targets = data.get("targets", [])
+            if not targets:
+                return None
+            return targets[0].get("target_chembl_id")
+    
+    return None
 
 
 def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
-    """
-    Fetch IC50 bioactivity entries for a ChEMBL target and compute summary stats.
-
-    Paginates through all available IC50 entries — ChEMBL caps results at
-    1000 per page. Computes median IC50 across all entries with valid values.
-
-    Args:
-        chembl_target_id: ChEMBL internal target ID e.g. 'CHEMBL203'
-    """
     ic50_values = []
     offset = 0
     limit = 1000
     total = None
 
-    with httpx.Client(timeout=60.0) as client:
-        while True:
+    while True:
+        # New client per request — avoids session timeout on long loops
+        with httpx.Client(timeout=60.0) as client:
             response = client.get(
                 f"{CHEMBL_API}/activity",
                 params={
@@ -114,31 +110,31 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
                     "format": "json",
                     "limit": limit,
                     "offset": offset,
-                }
+                },
+                follow_redirects=True,
             )
             response.raise_for_status()
             data = response.json()
 
-            if total is None:
-                total = data.get("page_meta", {}).get("total_count", 0)
+        if total is None:
+            total = data.get("page_meta", {}).get("total_count", 0)
 
-            activities = data.get("activities", [])
-            if not activities:
-                break
+        activities = data.get("activities", [])
+        if not activities:
+            break
 
-            for activity in activities:
-                value = activity.get("standard_value")
-                units = activity.get("standard_units", "")
-                if value is not None and units == "nM":
-                    try:
-                        ic50_values.append(float(value))
-                    except (ValueError, TypeError):
-                        pass
+        for activity in activities:
+            value = activity.get("standard_value")
+            units = activity.get("standard_units", "")
+            if value is not None and units == "nM":
+                try:
+                    ic50_values.append(float(value))
+                except (ValueError, TypeError):
+                    pass
 
-            offset += limit
-            # Cap at 5000 entries to avoid very long fetch times
-            if offset >= min(total, 2000):
-                break
+        offset += limit
+        if offset >= min(total, 2000):
+            break
 
     median_ic50 = statistics.median(ic50_values) if ic50_values else None
 
@@ -147,7 +143,6 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
         total_entries=total or 0,
         median_ic50_nm=median_ic50,
     )
-
 
 def _fetch_drug_mechanisms(chembl_target_id: str) -> list[Inhibitor]:
     """
