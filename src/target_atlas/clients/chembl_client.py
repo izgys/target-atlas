@@ -104,7 +104,7 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
     limit = 1000
     total = None
 
-    with httpx.Client(timeout=30.0) as client:
+    with httpx.Client(timeout=60.0) as client:
         while True:
             response = client.get(
                 f"{CHEMBL_API}/activity",
@@ -137,7 +137,7 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
 
             offset += limit
             # Cap at 5000 entries to avoid very long fetch times
-            if offset >= min(total, 5000):
+            if offset >= min(total, 2000):
                 break
 
     median_ic50 = statistics.median(ic50_values) if ic50_values else None
