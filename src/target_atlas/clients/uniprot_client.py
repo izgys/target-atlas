@@ -50,6 +50,14 @@ def _fetch_by_id(uniprot_id: str) -> UniProtResult:
     
     with http_client(timeout=10.0) as client:
         response = client.get(url, params={"format": "json"})
+
+        # 400 = malformed accession, 404 = well-formed but no such entry
+        if response.status_code in (400, 404):
+            raise ValueError(
+                f"'{uniprot_id}' is not a valid UniProt accession. "
+                f"Check the ID, or use the gene name instead."
+            )
+
         response.raise_for_status()
         data = response.json()
 

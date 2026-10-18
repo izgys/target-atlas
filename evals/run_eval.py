@@ -317,11 +317,11 @@ def _git_commit() -> str:
 # Entry point
 # ---------------------------------------------------------------------------
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Run the Target Atlas evaluation harness.")
     parser.add_argument("--targets", nargs="*", help="subset of queries to run, e.g. EGFR TREM2")
     parser.add_argument("--no-cache", action="store_true", help="call live APIs without caching")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if not args.no_cache:
         enable_cache(CACHE_DIR)

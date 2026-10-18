@@ -46,9 +46,6 @@ def report_generator(state: TargetAtlasState) -> dict:
         encoding="utf-8"
     )
 
-    print(f"Report written to {report_path}")
-    print(f"Summary written to {summary_path}")
-
     return {}
 
 
