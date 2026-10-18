@@ -5,21 +5,21 @@
     "organism": "Homo sapiens"
   },
   "run_metadata": {
-    "run_id": "a628bdc3-57ae-43ea-8333-c92b4be01def",
-    "timestamp": "2026-10-18T13:38:25.055830"
+    "run_id": "a1751099-28c6-4e25-8509-cb00c3317b7b",
+    "timestamp": "2026-10-18T14:25:11.861516"
   },
   "assessment": {
     "druggability_score": "high",
     "structural_confidence": "high",
     "chemical_confidence": "high",
     "literature_confidence": "high",
-    "summary": "EGFR (P00533) is one of the most well-validated and extensively drugged targets in oncology, with 393 PDB structures (best resolution 1.07Å), 26,600 ChEMBL IC50 entries, and 20 approved drugs including small molecules and biologics. The target has outstanding structural, chemical, and literature support, making it a benchmark for high druggability. Ongoing research continues to address resistance mechanisms and novel indications such as glioblastoma.",
+    "summary": "EGFR (P00533) is one of the best-validated and most extensively drugged targets in oncology, with 393 PDB structures (best resolution 1.07Å), 26,600 ChEMBL IC50 entries, and 20 approved drugs including small-molecule inhibitors and monoclonal antibodies. The structural, chemical, and literature evidence is collectively exceptional, placing this target firmly in the highest druggability tier. Ongoing clinical research continues to expand its therapeutic relevance across multiple cancer indications.",
     "evidence_gaps": [
-      "Median IC50 of 2000 nM suggests a large fraction of screened compounds have modest potency, indicating selectivity and potency optimization remain non-trivial for new chemical series",
-      "AlphaFold mean pLDDT of 75.9 with only 70.7% high-confidence residues suggests disordered regions (e.g., extracellular domain, flexible loops) are not fully captured structurally, though kinase domain is well resolved by X-ray",
-      "Resistance mutations (e.g., T790M, C797S, exon 20 insertions) limit the utility of existing drugs and create ongoing druggability challenges for next-generation inhibitors",
-      "CNS penetrance of current approved drugs is limited, which is relevant for indications like glioblastoma highlighted in recent literature",
-      "Tissue-specific and mutation-specific efficacy profiles are not fully captured by aggregate ChEMBL or PDB data"
+      "Median IC50 of 2000 nM across all 26,600 entries suggests many compounds in the dataset have modest potency, which may reflect screening hits rather than optimised leads — the distribution breadth is not fully characterised here",
+      "AlphaFold mean pLDDT of 75.9 with only 70.7% high-confidence residues indicates disordered regions (likely extracellular and intracellular flexible loops/tails) not well captured structurally, which could be relevant for allosteric or non-kinase domain targeting",
+      "Resistance mechanisms (e.g., T790M, C797S, exon 20 insertions) remain incompletely addressed by current approved drugs, representing an ongoing gap for next-generation inhibitor design",
+      "Tumour-type-specific efficacy and biomarker selection (e.g., EGFR amplification vs. mutation status) are not captured in the aggregate data provided",
+      "CNS penetrance and blood-brain barrier data for approved agents are not reflected in the summary evidence, relevant given recent glioma trials in the literature"
     ]
   },
   "structural_data": {

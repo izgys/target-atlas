@@ -5,21 +5,21 @@
     "organism": "Homo sapiens"
   },
   "run_metadata": {
-    "run_id": "1691a46c-c4c0-4eea-a7b8-983575c241f4",
-    "timestamp": "2026-10-18T13:41:10.880427"
+    "run_id": "da0255e0-dc5e-4aee-a8b7-2710c88b9468",
+    "timestamp": "2026-10-18T14:28:01.054233"
   },
   "assessment": {
     "druggability_score": "high",
     "structural_confidence": "medium",
     "chemical_confidence": "medium",
     "literature_confidence": "high",
-    "summary": "IL6R (P08887) is a well-validated, clinically proven drug target with two approved monoclonal antibody therapeutics (tocilizumab and sarilumab) and multiple high-resolution crystal structures, several with ligands bound. While small-molecule chemical matter is essentially absent from ChEMBL (0 IC50 entries), the target is highly druggable at the biologics level with strong structural and literature support.",
+    "summary": "IL6R (P08887) is a well-validated, highly druggable target with two approved biologic drugs (tocilizumab and sarilumab) that are established treatments for rheumatoid arthritis and other inflammatory conditions. Structural coverage is solid with 10 PDB entries including 8 ligand-bound structures at near-high resolution, and the literature base is extensive with active ongoing research. The main evidence gap is the absence of small-molecule IC50 data in ChEMBL, reflecting the current dominance of antibody-based therapeutics against this target.",
     "evidence_gaps": [
-      "No small-molecule IC50 data in ChEMBL — the target has been exclusively pursued via large biologics (mAbs), so small-molecule druggability remains undemonstrated",
-      "Best resolution (2.4Å) is at the boundary of 'high' structural confidence; no sub-2.5Å structures confirmed with multiple ligand series",
-      "AlphaFold pLDDT of 77.9 with only 67.5% of residues above 70 suggests moderate disorder in portions of the protein (likely flexible extracellular loops or intracellular regions), which may affect small-molecule pocket definition",
-      "No allosteric or orthosteric small-molecule binding pocket characterisation reported in the literature",
-      "Lack of co-crystal structures with small-molecule ligands limits structure-based drug design for non-biologic modalities"
+      "No small-molecule IC50 data in ChEMBL despite approved drugs — approved agents are biologics (antibodies), not small molecules",
+      "Best PDB resolution is 2.4Å (just outside the <2.5Å high-confidence threshold), and it is unclear if all ligand-bound structures are at comparable resolution",
+      "AlphaFold mean pLDDT of 77.9 with only 67.5% of residues above 70 suggests portions of the extracellular or intracellular regions may be disordered or flexible, limiting small-molecule pocket prediction",
+      "No approved small-molecule inhibitors; small-molecule druggability of IL6R protein-protein interaction surfaces is not well established",
+      "Limited information on intracellular or allosteric binding sites that might be amenable to small-molecule intervention"
     ]
   },
   "structural_data": {

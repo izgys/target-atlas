@@ -1,8 +1,8 @@
 # Target Atlas Report — EGFR (P00533)
 
-**Generated:** 2026-10-18T13:38:25.055830  
+**Generated:** 2026-10-18T14:25:11.861516  
 **Organism:** Homo sapiens  
-**Run ID:** a628bdc3-57ae-43ea-8333-c92b4be01def  
+**Run ID:** a1751099-28c6-4e25-8509-cb00c3317b7b  
 
 ---
 
@@ -13,27 +13,27 @@
 **Chemical confidence:** `high`  
 **Literature confidence:** `high`  
 
-EGFR (P00533) is one of the most well-validated and extensively drugged targets in oncology, with 393 PDB structures (best resolution 1.07Å), 26,600 ChEMBL IC50 entries, and 20 approved drugs including small molecules and biologics. The target has outstanding structural, chemical, and literature support, making it a benchmark for high druggability. Ongoing research continues to address resistance mechanisms and novel indications such as glioblastoma.
+EGFR (P00533) is one of the best-validated and most extensively drugged targets in oncology, with 393 PDB structures (best resolution 1.07Å), 26,600 ChEMBL IC50 entries, and 20 approved drugs including small-molecule inhibitors and monoclonal antibodies. The structural, chemical, and literature evidence is collectively exceptional, placing this target firmly in the highest druggability tier. Ongoing clinical research continues to expand its therapeutic relevance across multiple cancer indications.
 
 ### Evidence Gaps
 
-- Median IC50 of 2000 nM suggests a large fraction of screened compounds have modest potency, indicating selectivity and potency optimization remain non-trivial for new chemical series
-- AlphaFold mean pLDDT of 75.9 with only 70.7% high-confidence residues suggests disordered regions (e.g., extracellular domain, flexible loops) are not fully captured structurally, though kinase domain is well resolved by X-ray
-- Resistance mutations (e.g., T790M, C797S, exon 20 insertions) limit the utility of existing drugs and create ongoing druggability challenges for next-generation inhibitors
-- CNS penetrance of current approved drugs is limited, which is relevant for indications like glioblastoma highlighted in recent literature
-- Tissue-specific and mutation-specific efficacy profiles are not fully captured by aggregate ChEMBL or PDB data
+- Median IC50 of 2000 nM across all 26,600 entries suggests many compounds in the dataset have modest potency, which may reflect screening hits rather than optimised leads — the distribution breadth is not fully characterised here
+- AlphaFold mean pLDDT of 75.9 with only 70.7% high-confidence residues indicates disordered regions (likely extracellular and intracellular flexible loops/tails) not well captured structurally, which could be relevant for allosteric or non-kinase domain targeting
+- Resistance mechanisms (e.g., T790M, C797S, exon 20 insertions) remain incompletely addressed by current approved drugs, representing an ongoing gap for next-generation inhibitor design
+- Tumour-type-specific efficacy and biomarker selection (e.g., EGFR amplification vs. mutation status) are not captured in the aggregate data provided
+- CNS penetrance and blood-brain barrier data for approved agents are not reflected in the summary evidence, relevant given recent glioma trials in the literature
 
 ### Reasoning Trace
 
-Step 1 - Structural Confidence: EGFR has 393 PDB entries with the best resolution at 1.07Å (X-ray diffraction), and 19 of the top 20 structures are ligand-bound. This is exceptional structural coverage. The AlphaFold mean pLDDT of 75.9 and 70.7% high-confidence fraction are moderate, but this is largely irrelevant given the wealth of experimental structures. The kinase domain is extremely well characterized crystallographically. Structural confidence = HIGH.
+Step 1 — Structural confidence: 393 PDB entries with the best resolution at 1.07Å (X-ray diffraction) is outstanding. 19 of the top 20 structures have bound ligands, providing an extensive picture of the ATP-binding site and ligand interactions. This is unambiguously 'high' structural confidence. The AlphaFold pLDDT of 75.9 (mean) with 70.7% of residues above 70 is moderate, but this is largely irrelevant given the wealth of experimental structures. The lower pLDDT regions likely correspond to the extracellular domain and flexible linkers, which are less relevant to the kinase domain druggability already established.
 
-Step 2 - Chemical Confidence: ChEMBL target CHEMBL203 has 26,600 IC50 entries and 20 approved drugs spanning multiple mechanisms (covalent and non-covalent small molecule kinase inhibitors, monoclonal antibodies, antibody-drug conjugates). This is among the most chemically characterized targets in existence. The median IC50 of 2000 nM reflects the breadth of screening data including many weak/non-selective compounds, not the quality of the best compounds. Chemical confidence = HIGH.
+Step 2 — Chemical confidence: 26,600 IC50 entries in ChEMBL is among the highest for any human target. 20 approved drugs spanning small-molecule TKIs (erlotinib, gefitinib, afatinib, osimertinib, etc.) and monoclonal antibodies (cetuximab, panitumumab) confirm extensive clinical translation. The median IC50 of 2000 nM across all entries is somewhat high, but this is expected in a large, heterogeneous dataset that includes early screening compounds, fragments, and less-optimised series; the approved drugs themselves have low nM to sub-nM potency. Chemical confidence is 'high'.
 
-Step 3 - Literature Confidence: 18,783 PubMed papers with EGFR in the title is extraordinary. Recent publications (2026) continue to appear across multiple cancer types including glioma, lung cancer, and metabolic disease contexts. Disease validation is extremely strong across multiple tumor types. Literature confidence = HIGH.
+Step 3 — Literature confidence: 18,783 PubMed papers with EGFR in the title represents an enormous body of literature. Recent publications (2026) include clinical trials, molecular tumour board cases, and mechanistic studies across multiple cancer types (NSCLC, glioblastoma, colorectal cancer, etc.). Disease validation is rock-solid (Level 1 clinical evidence in multiple indications). Literature confidence is 'high'. Note: one 2026 paper references 'eGFR' (estimated glomerular filtration rate) rather than EGFR the protein, indicating minor noise in the PubMed search, but this does not meaningfully affect the assessment.
 
-Step 4 - Evidence Gaps: Despite the overwhelming evidence, some nuance is warranted. The high median IC50 across ChEMBL entries indicates that novel scaffolds still face potency/selectivity challenges. Resistance is a major clinical problem. Structural coverage of disordered regions (extracellular domain, juxtamembrane region) is less complete, which may matter for allosteric drug design. CNS penetrance is a gap for glioblastoma applications.
+Step 4 — Evidence gaps: The main gaps are not in basic druggability (which is unequivocal) but in specific frontier areas: resistance mechanisms are still an active challenge, CNS penetrance is a practical limitation for some approved agents, and the structural data on disordered regions outside the kinase domain is less complete. Tumour-type-specific biomarker selection and combination strategies are also evolving. These are refinement questions rather than fundamental uncertainties about druggability.
 
-Step 5 - Overall Druggability: EGFR is the canonical druggable target. All three evidence pillars (structural, chemical, literature) are at the highest possible level. Druggability score = HIGH.
+Step 5 — Overall druggability: EGFR is a textbook example of a high-confidence druggable target. All three evidence pillars (structural, chemical, literature) independently support the highest druggability rating. The score is 'high' with high confidence across all dimensions.
 
 ---
 

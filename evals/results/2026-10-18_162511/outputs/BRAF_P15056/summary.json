@@ -1,0 +1,96 @@
+{
+  "target": {
+    "uniprot_id": "P15056",
+    "gene_name": "BRAF",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "405ffb4a-73df-4057-b398-79b6a7271881",
+    "timestamp": "2026-10-18T14:25:58.372871"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "BRAF is one of the best-validated oncology drug targets in human medicine, with 5 approved small-molecule inhibitors, over 11,000 ChEMBL IC50 entries, and 138 PDB structures including many high-resolution ligand-bound co-crystals. The extensive structural, chemical, and clinical evidence places BRAF firmly in the highest druggability tier, with ongoing active research across multiple cancer indications.",
+    "evidence_gaps": [
+      "AlphaFold mean pLDDT of 66.4 (55% high-confidence fraction) suggests disordered regions outside the kinase domain, but this does not limit druggability given abundant experimental structures",
+      "Acquired resistance mechanisms (e.g., paradoxical MAPK activation, splice variants, RAS mutations) are not fully overcome by current inhibitors — next-generation strategies still under investigation",
+      "Selectivity for BRAF V600E vs. wild-type BRAF and other RAF family members (CRAF, ARAF) varies across approved drugs; pan-RAF inhibitors and type II inhibitors for non-V600 mutations remain an active gap",
+      "Clinical utility in RAS-mutant or BRAF non-V600 contexts is still being defined (limited approved options for class II/III BRAF mutations)",
+      "Brain-penetrant BRAF inhibitors for CNS metastases or primary brain tumors represent an incompletely addressed therapeutic gap"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 138,
+    "best_resolution_angstrom": 1.5,
+    "ligand_bound_count": 18,
+    "alphafold_mean_plddt": 66.38,
+    "alphafold_high_confidence_fraction": 0.552,
+    "pdb_ids": [
+      "8VSO",
+      "8JNB",
+      "8C7X",
+      "8C7Y",
+      "9EW6",
+      "8JNA",
+      "9BP8",
+      "5VYK",
+      "9BFB",
+      "7K0V",
+      "5ITA",
+      "3NY5",
+      "4XV9",
+      "6XFP",
+      "6N0Q",
+      "9AXX",
+      "5VAM",
+      "5VR3",
+      "6P3D",
+      "5JSM"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL5145",
+    "total_ic50_entries": 11017,
+    "median_ic50_nm": 173.5,
+    "approved_drug_count": 5,
+    "approved_drugs": [
+      "DABRAFENIB MESYLATE",
+      "REGORAFENIB",
+      "SORAFENIB TOSYLATE",
+      "VEMURAFENIB",
+      "ENCORAFENIB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 7320,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42891583",
+      "42886887",
+      "42885245",
+      "42863086",
+      "42853102",
+      "42851340",
+      "42827401",
+      "42826365",
+      "42808388",
+      "42798176",
+      "42794461",
+      "42782943",
+      "42777179",
+      "42771519",
+      "42770398",
+      "42769885",
+      "42750388",
+      "42747511",
+      "42733341",
+      "42723578"
+    ]
+  },
+  "data_gaps": {}
+}

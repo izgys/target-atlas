@@ -1,8 +1,8 @@
 # Target Atlas Report — IL6R (P08887)
 
-**Generated:** 2026-10-18T13:41:10.880427  
+**Generated:** 2026-10-18T14:28:01.054233  
 **Organism:** Homo sapiens  
-**Run ID:** 1691a46c-c4c0-4eea-a7b8-983575c241f4  
+**Run ID:** da0255e0-dc5e-4aee-a8b7-2710c88b9468  
 
 ---
 
@@ -13,27 +13,27 @@
 **Chemical confidence:** `medium`  
 **Literature confidence:** `high`  
 
-IL6R (P08887) is a well-validated, clinically proven drug target with two approved monoclonal antibody therapeutics (tocilizumab and sarilumab) and multiple high-resolution crystal structures, several with ligands bound. While small-molecule chemical matter is essentially absent from ChEMBL (0 IC50 entries), the target is highly druggable at the biologics level with strong structural and literature support.
+IL6R (P08887) is a well-validated, highly druggable target with two approved biologic drugs (tocilizumab and sarilumab) that are established treatments for rheumatoid arthritis and other inflammatory conditions. Structural coverage is solid with 10 PDB entries including 8 ligand-bound structures at near-high resolution, and the literature base is extensive with active ongoing research. The main evidence gap is the absence of small-molecule IC50 data in ChEMBL, reflecting the current dominance of antibody-based therapeutics against this target.
 
 ### Evidence Gaps
 
-- No small-molecule IC50 data in ChEMBL — the target has been exclusively pursued via large biologics (mAbs), so small-molecule druggability remains undemonstrated
-- Best resolution (2.4Å) is at the boundary of 'high' structural confidence; no sub-2.5Å structures confirmed with multiple ligand series
-- AlphaFold pLDDT of 77.9 with only 67.5% of residues above 70 suggests moderate disorder in portions of the protein (likely flexible extracellular loops or intracellular regions), which may affect small-molecule pocket definition
-- No allosteric or orthosteric small-molecule binding pocket characterisation reported in the literature
-- Lack of co-crystal structures with small-molecule ligands limits structure-based drug design for non-biologic modalities
+- No small-molecule IC50 data in ChEMBL despite approved drugs — approved agents are biologics (antibodies), not small molecules
+- Best PDB resolution is 2.4Å (just outside the <2.5Å high-confidence threshold), and it is unclear if all ligand-bound structures are at comparable resolution
+- AlphaFold mean pLDDT of 77.9 with only 67.5% of residues above 70 suggests portions of the extracellular or intracellular regions may be disordered or flexible, limiting small-molecule pocket prediction
+- No approved small-molecule inhibitors; small-molecule druggability of IL6R protein-protein interaction surfaces is not well established
+- Limited information on intracellular or allosteric binding sites that might be amenable to small-molecule intervention
 
 ### Reasoning Trace
 
-Step 1 — Structural evidence: IL6R has 10 PDB entries with a best resolution of 2.4Å by X-ray diffraction. Eight of ten structures have a ligand bound, which is a strong indicator of a druggable binding site that has been structurally characterised in complex with binding partners. The 2.4Å resolution sits just at the cusp of 'high' confidence; combined with the modest AlphaFold mean pLDDT of 77.9 and only 67.5% of residues above pLDDT 70, there is meaningful structural uncertainty in disordered regions. I rate structural_confidence as 'medium' rather than 'high' because the best resolution is borderline and the AlphaFold data suggests partial disorder.
+Step 1 — Structural evidence: IL6R has 10 PDB entries with a best resolution of 2.4Å by X-ray diffraction. This is borderline (just at the <2.5Å threshold) but still reasonably informative. Crucially, 8 of 10 structures have ligands bound, indicating the binding interface is structurally characterised. The AlphaFold model has a mean pLDDT of 77.9 and 67.5% of residues above pLDDT 70, which is moderate confidence — likely reflecting flexible linker or cytoplasmic regions. Overall, structural confidence is rated 'medium' because structures exist and are ligand-bound but fall just short of multiple high-resolution (<2.5Å) co-crystal structures.
 
-Step 2 — Chemical evidence: ChEMBL reports 0 IC50 entries, which at face value would suggest 'none' for chemical confidence. However, two approved drugs exist: tocilizumab (a humanised anti-IL6R mAb) and sarilumab (a human anti-IL6R mAb), both validated therapeutics. The ChEMBL schema for this target appears to capture only small-molecule activity; biologic-based approvals are recorded separately. This means there is strong clinical proof of concept for target engagement and therapeutic benefit, but no small-molecule chemical matter has been reported. I rate chemical_confidence as 'medium' — the target is chemically validated at the biologic level (approved drugs exist), but small-molecule tractability is unproven.
+Step 2 — Chemical evidence: ChEMBL lists 0 IC50 entries for this target. However, 2 approved drugs exist (tocilizumab and sarilumab), both monoclonal antibodies targeting the IL-6 receptor alpha subunit. The absence of IC50 entries in ChEMBL is because antibody therapeutics are typically not captured in small-molecule bioactivity databases. This does not imply the target is undruggable — rather, it reflects the modality of approved agents. Chemical confidence is rated 'medium' because approved drugs exist and validate the target pharmacologically, but there is essentially no small-molecule chemical matter documented.
 
-Step 3 — Literature evidence: 226 PubMed papers with IL6R in the title, with active 2026 publications spanning mechanistic biology, disease indications (cytokine release syndrome, breast cancer, PCOS, hemorrhoidal disease, viral infection), and novel targeting strategies (dual inhibition, GP130 co-targeting). This reflects a mature, actively researched target with strong disease validation across multiple indications. I rate literature_confidence as 'high'.
+Step 3 — Literature evidence: 226 PubMed publications with IL6R in the title, with very recent 2026 papers covering diverse topics: viral immunology, cytokine release syndrome, cancer (breast), epigenetic regulation, and metabolic/inflammatory disease (PCOS). This indicates an active and broad research community, strong disease validation across multiple indications, and ongoing mechanistic and translational work. Literature confidence is rated 'high'.
 
-Step 4 — Overall druggability: IL6R is a paradigmatic example of a biologically and clinically validated drug target. The approved mAbs confirm that blocking this receptor has clear therapeutic utility in inflammatory and autoimmune disease. The absence of small-molecule data reflects the biology (large protein-protein interaction surface, extracellular cytokine receptor) rather than a lack of druggability per se — it is harder to drug with small molecules, but the target is unambiguously druggable. The overall druggability score is 'high', specifically for biologic modalities; caution is warranted if small-molecule programmes are being considered.
+Step 4 — Overall druggability: IL6R is one of the best-validated immunology targets in clinical medicine. Two approved antibody drugs exist, the target is extensively studied, and structural data on the ligand-binding interface is available. The druggability score is 'high' when considering biologic modalities. The caveat is that small-molecule druggability is less well established — the cytokine receptor extracellular domain PPI interface is notoriously challenging for small molecules. Nevertheless, the clinical validation and structural characterisation support a 'high' overall druggability rating, with the understanding that the preferred modality is biologics.
 
-Step 5 — Evidence gaps: The key gaps are (1) absence of small-molecule chemical matter, (2) no characterised small-molecule binding pocket, (3) moderate structural disorder in parts of the protein, and (4) the best crystal structure resolution is borderline.
+Step 5 — Evidence gaps: The key gaps are (a) absence of small-molecule bioactivity data, (b) uncertainty about whether the binding pockets visible in crystal structures are tractable for small molecules, (c) moderate (not high) structural resolution and AlphaFold confidence suggesting some conformational flexibility, and (d) no characterisation of allosteric or intracellular small-molecule binding opportunities.
 
 ---
 

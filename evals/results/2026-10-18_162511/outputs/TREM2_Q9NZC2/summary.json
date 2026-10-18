@@ -1,0 +1,86 @@
+{
+  "target": {
+    "uniprot_id": "Q9NZC2",
+    "gene_name": "TREM2",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "df09c439-69c5-43ab-9226-4c9144a959cf",
+    "timestamp": "2026-10-18T14:28:23.476123"
+  },
+  "assessment": {
+    "druggability_score": "medium",
+    "structural_confidence": "high",
+    "chemical_confidence": "low",
+    "literature_confidence": "high",
+    "summary": "TREM2 is a well-characterized immunoreceptor with excellent structural data (15 PDB entries at up to 1.47Å, 11 with bound ligands) confirming a tractable ligand-binding site. Although ChEMBL currently records zero IC50 entries, a 2026 first-in-human study of an oral small-molecule TREM2 agonist (VG-3927/SAR448851) demonstrates real chemical tractability not yet reflected in public databases. The target has strong disease validation across Alzheimer's disease, cancer, and infectious disease, supporting a medium druggability rating with an upward trajectory as clinical data matures.",
+    "evidence_gaps": [
+      "ChEMBL has zero IC50 entries despite emerging small-molecule chemical matter in clinical development — significant database lag",
+      "No approved drugs; clinical validation of small-molecule agonist approach still pending",
+      "Agonism of a cell-surface immune receptor is mechanistically complex; full MoA of small-molecule agonists not publicly characterized",
+      "Structural coverage of transmembrane and intracellular signalling domains is limited; pLDDT only moderate (76.8) suggesting disordered regions",
+      "Selectivity profiles of clinical candidates against related TREM family members not publicly available",
+      "Pharmacokinetic and CNS penetration data for oral small molecules targeting TREM2 in neurodegeneration context is sparse in public literature"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 15,
+    "pdb_total_count": 15,
+    "best_resolution_angstrom": 1.466,
+    "ligand_bound_count": 11,
+    "alphafold_mean_plddt": 76.75,
+    "alphafold_high_confidence_fraction": 0.613,
+    "pdb_ids": [
+      "6XDS",
+      "5UD8",
+      "9PWN",
+      "8T51",
+      "8T59",
+      "6B8O",
+      "5UD7",
+      "6Y6C",
+      "6YMQ",
+      "5ELI",
+      "6YYE",
+      "9PX5",
+      "6Z0G",
+      "6Z0H",
+      "6Z0I"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL6196124",
+    "total_ic50_entries": 0,
+    "median_ic50_nm": null,
+    "approved_drug_count": 0,
+    "approved_drugs": []
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 841,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42877165",
+      "42875426",
+      "42873892",
+      "42872589",
+      "42865133",
+      "42856794",
+      "42818059",
+      "42812614",
+      "42806169",
+      "42800026",
+      "42794453",
+      "42779834",
+      "42768009",
+      "42714953",
+      "42705697",
+      "42694654",
+      "42689388",
+      "42687907",
+      "42658581",
+      "42629379"
+    ]
+  },
+  "data_gaps": {}
+}

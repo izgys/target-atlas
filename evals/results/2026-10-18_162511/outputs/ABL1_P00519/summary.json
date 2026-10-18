@@ -1,0 +1,97 @@
+{
+  "target": {
+    "uniprot_id": "P00519",
+    "gene_name": "ABL1",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "d92cec2a-6f5a-41b5-92f7-3cdd1c0087d0",
+    "timestamp": "2026-10-18T14:26:42.076676"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "ABL1 is one of the best-validated oncology drug targets in human medicine, with 7 approved kinase inhibitors (including imatinib, dasatinib, nilotinib, and bosutinib), over 5,000 ChEMBL IC50 entries, and 85 high-resolution crystal structures — several with sub-ångström resolution. The literature base is extensive (>1,200 publications) with strong disease validation in CML and Ph+ ALL. Druggability is unambiguously high across all evidence dimensions.",
+    "evidence_gaps": [
+      "AlphaFold mean pLDDT is only 63.4 (high-confidence fraction 46%), reflecting disordered regions (e.g., N-terminal cap, linker regions) not covered by crystal structures — though this does not impair druggability assessment given the wealth of experimental structures",
+      "Resistance mutation landscape (e.g., T315I gatekeeper) continues to evolve; third- and fourth-generation inhibitor coverage may be incomplete in ChEMBL",
+      "Selectivity profiles across the kinome are not fully characterised for all 5,295 compounds in ChEMBL, which may affect off-target liability assessment for newer compounds",
+      "Allosteric binding sites beyond the ATP pocket and myristoyl pocket are less well characterised chemically"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 85,
+    "best_resolution_angstrom": 1.03,
+    "ligand_bound_count": 16,
+    "alphafold_mean_plddt": 63.38,
+    "alphafold_high_confidence_fraction": 0.46299999999999997,
+    "pdb_ids": [
+      "5OAZ",
+      "7PVS",
+      "4J9C",
+      "4J9F",
+      "7PW2",
+      "3EG3",
+      "4J9E",
+      "5DC4",
+      "4J9D",
+      "5HU9",
+      "7PVQ",
+      "5DC9",
+      "4JJC",
+      "4JJD",
+      "5NP2",
+      "1BBZ",
+      "4JJB",
+      "7PVR",
+      "2HZI",
+      "4J9H"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL1862",
+    "total_ic50_entries": 5295,
+    "median_ic50_nm": 140.0,
+    "approved_drug_count": 7,
+    "approved_drugs": [
+      "NILOTINIB HYDROCHLORIDE MONOHYDRATE",
+      "DASATINIB ANHYDROUS",
+      "BOSUTINIB",
+      "REGORAFENIB",
+      "IMATINIB MESYLATE",
+      "ASCIMINIB",
+      "UMBRALISIB TOSYLATE"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 1228,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42886318",
+      "42876003",
+      "42794529",
+      "42706170",
+      "42681542",
+      "42667018",
+      "42611361",
+      "42575681",
+      "42573582",
+      "42533241",
+      "42522808",
+      "42509252",
+      "42485989",
+      "42463944",
+      "42455913",
+      "42366058",
+      "42365381",
+      "42360373",
+      "42357552",
+      "42289259"
+    ]
+  },
+  "data_gaps": {}
+}

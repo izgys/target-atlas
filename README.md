@@ -161,7 +161,7 @@ python -m evals.run_eval                      # all ten targets
 python -m evals.run_eval --targets EGFR TREM2 # a subset
 ```
 
-**Results** (`claude-sonnet-4-6`, commit `7bfa378`):
+**Results** (`claude-sonnet-4-6`, commit `e642589`):
 
 | Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty |
 |---|---|---|---|---|---|---|---|

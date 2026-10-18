@@ -5,23 +5,22 @@
     "organism": "Homo sapiens"
   },
   "run_metadata": {
-    "run_id": "c7a915a4-3ea5-402e-ba99-520fe883c931",
-    "timestamp": "2026-10-18T13:41:34.049832"
+    "run_id": "df09c439-69c5-43ab-9226-4c9144a959cf",
+    "timestamp": "2026-10-18T14:28:23.476123"
   },
   "assessment": {
     "druggability_score": "medium",
     "structural_confidence": "high",
-    "chemical_confidence": "none",
+    "chemical_confidence": "low",
     "literature_confidence": "high",
-    "summary": "TREM2 is a well-characterised immunoreceptor expressed on microglia and myeloid cells with strong disease validation in Alzheimer's disease, neurodegeneration, and cancer. It has excellent structural coverage (15 PDB entries, best resolution 1.47Å, 11 ligand-bound structures) and a robust and growing literature base (841 publications), but currently lacks ChEMBL IC50 data and approved drugs, with a first-in-human oral small-molecule agonist (VG-3927/SAR448851) only just entering clinical evaluation in 2026. Druggability is assessed as medium-high: the structural tractability is clearly established but chemical maturity remains early-stage.",
+    "summary": "TREM2 is a well-characterized immunoreceptor with excellent structural data (15 PDB entries at up to 1.47Å, 11 with bound ligands) confirming a tractable ligand-binding site. Although ChEMBL currently records zero IC50 entries, a 2026 first-in-human study of an oral small-molecule TREM2 agonist (VG-3927/SAR448851) demonstrates real chemical tractability not yet reflected in public databases. The target has strong disease validation across Alzheimer's disease, cancer, and infectious disease, supporting a medium druggability rating with an upward trajectory as clinical data matures.",
     "evidence_gaps": [
-      "No ChEMBL IC50 entries for this target — chemical activity data is absent from the standard cheminformatics database",
-      "No approved drugs targeting TREM2 exist; the most advanced small molecule (VG-3927/SAR448851) is only at first-in-human stage (2026)",
-      "TREM2 is primarily a receptor/signalling adaptor — canonical small-molecule binding pockets may be limited; most therapeutic approaches have historically focused on antibodies or biologics",
-      "The agonist vs antagonist therapeutic rationale differs by disease context (neurodegeneration vs cancer), creating target-validation complexity",
-      "AlphaFold mean pLDDT of 76.8 with only 61% high-confidence residues suggests the full-length protein (including transmembrane and intracellular regions) has structural uncertainty beyond the well-resolved ectodomain",
-      "Selectivity risk: TREM2 shares structural homology with other TREM family members (e.g., TREM1); selectivity data for small molecules is lacking",
-      "Cellular target engagement and pharmacodynamic biomarkers for small-molecule TREM2 agonism are not yet established in the literature"
+      "ChEMBL has zero IC50 entries despite emerging small-molecule chemical matter in clinical development — significant database lag",
+      "No approved drugs; clinical validation of small-molecule agonist approach still pending",
+      "Agonism of a cell-surface immune receptor is mechanistically complex; full MoA of small-molecule agonists not publicly characterized",
+      "Structural coverage of transmembrane and intracellular signalling domains is limited; pLDDT only moderate (76.8) suggesting disordered regions",
+      "Selectivity profiles of clinical candidates against related TREM family members not publicly available",
+      "Pharmacokinetic and CNS penetration data for oral small molecules targeting TREM2 in neurodegeneration context is sparse in public literature"
     ]
   },
   "structural_data": {
