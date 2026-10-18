@@ -1,4 +1,7 @@
 import httpx
+from functools import lru_cache
+
+from target_atlas.utils.http import http_client
 import time
 from pydantic import BaseModel
 
@@ -33,7 +36,7 @@ def fetch_publications(
         list of Publication objects sorted by date descending
         empty list if no results or API unavailable
     """
-    pmids = _esearch(gene_name, max_results)
+    pmids, _ = _esearch(gene_name, max_results)
 
     if not pmids:
         return []
@@ -45,7 +48,20 @@ def fetch_publications(
     return publications
 
 
-def _esearch(gene_name: str, max_results: int) -> list[str]:
+def count_publications(gene_name: str, max_results: int = 20) -> int:
+    """
+    Total number of PubMed hits for the title search used by fetch_publications.
+
+    fetch_publications returns only the most recent few; this is the full
+    count, which the literature confidence thresholds are defined on.
+    Reuses the cached search response — no extra API call.
+    """
+    _, total = _esearch(gene_name, max_results)
+    return total
+
+
+@lru_cache(maxsize=32)
+def _esearch(gene_name: str, max_results: int) -> tuple[list[str], int]:
     """
     Search PubMed for PMIDs matching a gene symbol in the title field.
     Title-only search is significantly more precise than title/abstract —
@@ -55,7 +71,7 @@ def _esearch(gene_name: str, max_results: int) -> list[str]:
     """
     query = f'"{gene_name}"[Title] AND human[organism]'
 
-    with httpx.Client(timeout=15.0) as client:
+    with http_client(timeout=15.0) as client:
         response = client.get(
             f"{EUTILS_BASE}/esearch.fcgi",
             params={
@@ -69,8 +85,8 @@ def _esearch(gene_name: str, max_results: int) -> list[str]:
         response.raise_for_status()
         data = response.json()
 
-    id_list = data.get("esearchresult", {}).get("idlist", [])
-    return id_list
+    result = data.get("esearchresult", {})
+    return result.get("idlist", []), int(result.get("count", 0))
 
 def _efetch(pmids: list[str]) -> list[Publication]:
     """
@@ -88,7 +104,7 @@ def _efetch(pmids: list[str]) -> list[Publication]:
     """
     ids_str = ",".join(pmids)
 
-    with httpx.Client(timeout=15.0) as client:
+    with http_client(timeout=15.0) as client:
         response = client.get(
             f"{EUTILS_BASE}/esummary.fcgi",
             params={
@@ -158,7 +174,7 @@ def _enrich_abstracts(publications: list[Publication]) -> None:
 
     ids_str = ",".join(p.pubmed_id for p in publications)
 
-    with httpx.Client(timeout=20.0) as client:
+    with http_client(timeout=20.0) as client:
         response = client.get(
             f"{EUTILS_BASE}/efetch.fcgi",
             params={

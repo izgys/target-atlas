@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from target_atlas.state import TargetAtlasState
+from target_atlas.state import TargetAtlasState, retrieval_failed
 
 
 def report_generator(state: TargetAtlasState) -> dict:
@@ -29,7 +29,7 @@ def report_generator(state: TargetAtlasState) -> dict:
     uniprot_id = state.get("uniprot_id", "unknown")
 
     # Create output directory
-    output_dir = Path("results") / f"{gene_name}_{uniprot_id}"
+    output_dir = Path(state.get("output_dir", "results")) / f"{gene_name}_{uniprot_id}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate both outputs
@@ -110,7 +110,10 @@ def _build_report(state: TargetAtlasState) -> str:
     lines.append("")
     pdb_structures = state.get("pdb_structures", [])
     if pdb_structures:
-        lines.append(f"**PDB structures retrieved:** {len(pdb_structures)}")
+        lines.append(
+            f"**PDB entries:** {state.get('pdb_total_count', len(pdb_structures))} "
+            f"(top {len(pdb_structures)} by resolution detailed below)"
+        )
         best = pdb_structures[0]
         lines.append(f"**Best resolution:** {best.resolution}Å ({best.method})")
         ligand_count = sum(1 for s in pdb_structures if s.has_ligand)
@@ -126,7 +129,10 @@ def _build_report(state: TargetAtlasState) -> str:
             lines.append(f"| {s.pdb_id} | {res} | {s.method} | {ligand} |")
         lines.append("")
     else:
-        lines.append("*No experimental PDB structures found.*")
+        lines.append(
+            "*Retrieval failed — PDB structures could not be fetched, so absence is not established (see Pipeline Metadata).*"
+            if retrieval_failed(state, "pdb") else "*No experimental PDB structures found.*"
+        )
         lines.append("")
 
     af = state.get("alphafold_result")
@@ -142,7 +148,10 @@ def _build_report(state: TargetAtlasState) -> str:
             lines.append(f"**Model URL:** {af.model_url}  ")
         lines.append("")
     else:
-        lines.append("*AlphaFold prediction not available.*")
+        lines.append(
+            "*Retrieval failed — the AlphaFold prediction could not be fetched, so absence is not established (see Pipeline Metadata).*"
+            if retrieval_failed(state, "alphafold") else "*AlphaFold prediction not available.*"
+        )
         lines.append("")
 
     lines.append("---")
@@ -159,7 +168,11 @@ def _build_report(state: TargetAtlasState) -> str:
             lines.append(f"**Median IC50:** {bs.median_ic50_nm:.1f} nM")
         lines.append("")
     else:
-        lines.append("*Target not found in ChEMBL — no bioactivity data available.*")
+        lines.append(
+            "*Retrieval failed — ChEMBL bioactivity data could not be fetched, so absence is not established (see Pipeline Metadata).*"
+            if retrieval_failed(state, "chembl")
+            else "*Target not found in ChEMBL — no bioactivity data available.*"
+        )
         lines.append("")
 
     inhibitors = state.get("known_inhibitors", [])
@@ -174,7 +187,10 @@ def _build_report(state: TargetAtlasState) -> str:
             lines.append(f"| {name} | {mechanism} |")
         lines.append("")
     else:
-        lines.append("*No approved drugs found for this target.*")
+        lines.append(
+            "*Retrieval failed — approved drugs could not be fetched, so absence is not established (see Pipeline Metadata).*"
+            if retrieval_failed(state, "chembl_drugs") else "*No approved drugs found for this target.*"
+        )
         lines.append("")
 
     lines.append("---")
@@ -185,7 +201,10 @@ def _build_report(state: TargetAtlasState) -> str:
     lines.append("")
     pubs = state.get("recent_publications", [])
     if pubs:
-        lines.append(f"**Recent publications retrieved:** {len(pubs)}")
+        lines.append(
+            f"**PubMed title matches:** {state.get('publication_total_count', len(pubs))} "
+            f"({len(pubs)} most recent retrieved)"
+        )
         lines.append("")
         lines.append("### Most Recent Publications")
         lines.append("")
@@ -200,7 +219,10 @@ def _build_report(state: TargetAtlasState) -> str:
                 lines.append(f"> {abstract_preview}")
             lines.append("")
     else:
-        lines.append("*No recent publications found.*")
+        lines.append(
+            "*Retrieval failed — publications could not be fetched, so absence is not established (see Pipeline Metadata).*"
+            if retrieval_failed(state, "pubmed") else "*No recent publications found.*"
+        )
         lines.append("")
 
     lines.append("---")
@@ -262,10 +284,12 @@ def _build_summary(state: TargetAtlasState) -> dict:
         },
         "structural_data": {
             "pdb_structure_count": len(pdb_structures),
+            "pdb_total_count": state.get("pdb_total_count", len(pdb_structures)),
             "best_resolution_angstrom": pdb_structures[0].resolution if pdb_structures else None,
             "ligand_bound_count": sum(1 for s in pdb_structures if s.has_ligand),
             "alphafold_mean_plddt": af.mean_plddt if af else None,
             "alphafold_high_confidence_fraction": af.high_confidence_fraction if af else None,
+            "pdb_ids": [s.pdb_id for s in pdb_structures],
         },
         "chemical_data": {
             "chembl_target_id": bs.chembl_target_id if bs else None,
@@ -276,7 +300,9 @@ def _build_summary(state: TargetAtlasState) -> dict:
         },
         "literature_data": {
             "recent_publication_count": len(pubs),
+            "publication_total_count": state.get("publication_total_count", len(pubs)),
             "most_recent_year": pubs[0].year if pubs else None,
+            "pmids": [p.pubmed_id for p in pubs],
         },
         "data_gaps": state.get("agent_errors", {}),
     }

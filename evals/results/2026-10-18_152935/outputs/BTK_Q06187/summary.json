@@ -1,0 +1,94 @@
+{
+  "target": {
+    "uniprot_id": "Q06187",
+    "gene_name": "BTK",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "da863d7f-3e44-49e2-bcf4-ce11e26ea0d5",
+    "timestamp": "2026-10-18T13:33:32.792259"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "BTK (Q06187) is an exceptionally well-validated drug target with six approved small-molecule inhibitors, over 21,000 ChEMBL IC50 entries, and multiple ultra-high-resolution co-crystal structures. The target has strong disease validation across B-cell malignancies and immunological conditions, with active ongoing research into next-generation covalent, non-covalent, and PROTAC-based approaches.",
+    "evidence_gaps": [
+      "Resistance mechanisms to approved covalent BTK inhibitors (e.g., C481S mutation) limit utility of existing drugs, and full structural characterisation of all clinically relevant resistance mutants may be incomplete",
+      "Long-term safety and efficacy data for newer non-covalent inhibitors (e.g., pirtobrutinib) in broader patient populations are still emerging",
+      "Selectivity profiles across the full kinome for many chemical series may not be fully characterised, particularly for novel PROTAC degraders",
+      "Biomarker strategies for patient stratification and predicting BTK inhibitor-associated immune modulation remain under investigation"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "best_resolution_angstrom": 1.08,
+    "ligand_bound_count": 20,
+    "alphafold_mean_plddt": 84.44,
+    "alphafold_high_confidence_fraction": 0.865,
+    "pdb_ids": [
+      "5P9J",
+      "6DI1",
+      "5P9I",
+      "6HRP",
+      "6E4F",
+      "4RFZ",
+      "7L5O",
+      "5P9L",
+      "6DI9",
+      "6J6M",
+      "7N5O",
+      "5P9K",
+      "6BLN",
+      "6DI0",
+      "8FLV",
+      "5U9D",
+      "7KXM",
+      "8FLN",
+      "6X3P",
+      "7KXN"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL5251",
+    "total_ic50_entries": 21674,
+    "median_ic50_nm": 12.0,
+    "approved_drug_count": 6,
+    "approved_drugs": [
+      "IBRUTINIB",
+      "TIRABRUTINIB",
+      "ACALABRUTINIB",
+      "ZANUBRUTINIB",
+      "PIRTOBRUTINIB",
+      "ACALABRUTINIB MALEATE"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42858312",
+      "42825907",
+      "42786239",
+      "42740716",
+      "42720469",
+      "42687221",
+      "42678624",
+      "42667712",
+      "42639665",
+      "42615080",
+      "42571242",
+      "42566884",
+      "42528053",
+      "42518914",
+      "42496861",
+      "42479904",
+      "42454958",
+      "42453028",
+      "42397065",
+      "42393054"
+    ]
+  },
+  "data_gaps": {}
+}

@@ -1,7 +1,7 @@
 import json
 import anthropic
 
-from target_atlas.state import TargetAtlasState, DruggabilityAssessment
+from target_atlas.state import TargetAtlasState, DruggabilityAssessment, retrieval_failed
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -137,20 +137,29 @@ def _build_context(state: TargetAtlasState) -> str:
     lines.append("=== STRUCTURAL EVIDENCE ===")
     pdb_structures = state.get("pdb_structures", [])
     if pdb_structures:
-        lines.append(f"PDB structures: {len(pdb_structures)} retrieved")
+        lines.append(
+            f"PDB entries for this target: {state.get('pdb_total_count', len(pdb_structures))} "
+            f"(details below for the {len(pdb_structures)} best-resolved)"
+        )
         best = pdb_structures[0]
         lines.append(f"Best resolution: {best.resolution}Å ({best.method})")
         ligand_count = sum(1 for s in pdb_structures if s.has_ligand)
         lines.append(f"Structures with ligand bound: {ligand_count}/{len(pdb_structures)}")
     else:
-        lines.append("PDB structures: NONE AVAILABLE")
+        lines.append(
+            "PDB structures: RETRIEVAL FAILED — unknown, not absent"
+            if retrieval_failed(state, "pdb") else "PDB structures: NONE AVAILABLE"
+        )
 
     af = state.get("alphafold_result")
     if af:
         lines.append(f"AlphaFold mean pLDDT: {af.mean_plddt:.1f}")
         lines.append(f"High confidence fraction (pLDDT>70): {af.high_confidence_fraction:.2%}")
     else:
-        lines.append("AlphaFold: NOT AVAILABLE")
+        lines.append(
+            "AlphaFold: RETRIEVAL FAILED — unknown, not absent"
+            if retrieval_failed(state, "alphafold") else "AlphaFold: NOT AVAILABLE"
+        )
     lines.append("")
 
     # Chemical evidence
@@ -162,7 +171,10 @@ def _build_context(state: TargetAtlasState) -> str:
         if bs.median_ic50_nm:
             lines.append(f"Median IC50: {bs.median_ic50_nm:.1f} nM")
     else:
-        lines.append("ChEMBL: TARGET NOT IN DATABASE")
+        lines.append(
+            "ChEMBL bioactivity: RETRIEVAL FAILED — unknown, not absent"
+            if retrieval_failed(state, "chembl") else "ChEMBL: TARGET NOT IN DATABASE"
+        )
 
     inhibitors = state.get("known_inhibitors", [])
     if inhibitors:
@@ -172,19 +184,29 @@ def _build_context(state: TargetAtlasState) -> str:
         if len(inhibitors) > 5:
             lines.append(f"  ... and {len(inhibitors) - 5} more")
     else:
-        lines.append("Approved drugs: NONE")
+        lines.append(
+            "Approved drugs: RETRIEVAL FAILED — unknown, not absent"
+            if retrieval_failed(state, "chembl_drugs") else "Approved drugs: NONE"
+        )
     lines.append("")
 
     # Literature evidence
     lines.append("=== LITERATURE EVIDENCE ===")
     pubs = state.get("recent_publications", [])
     if pubs:
-        lines.append(f"Recent publications: {len(pubs)}")
+        lines.append(
+            f"PubMed papers with {state['gene_name']} in the title: "
+            f"{state.get('publication_total_count', len(pubs))} "
+            f"(the {len(pubs)} most recent retrieved)"
+        )
         lines.append("Most recent titles:")
         for pub in pubs[:5]:
             lines.append(f"  [{pub.year}] {pub.title}")
     else:
-        lines.append("Publications: NONE FOUND")
+        lines.append(
+            "Publications: RETRIEVAL FAILED — unknown, not absent"
+            if retrieval_failed(state, "pubmed") else "Publications: NONE FOUND"
+        )
     lines.append("")
 
     # Known failures from previous agents

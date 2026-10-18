@@ -1,0 +1,92 @@
+{
+  "target": {
+    "uniprot_id": "P01116",
+    "gene_name": "KRAS",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "bb9ef804-fa27-4c5b-bbcb-00709b56e090",
+    "timestamp": "2026-10-18T13:31:55.485285"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "KRAS is a well-validated oncology target with exceptional structural characterization (sub-1Å resolution, 20 ligand-bound PDB structures), a large chemical dataset (>5900 ChEMBL IC50 entries), and two FDA-approved covalent inhibitors (sotorasib and adagrasib) targeting the G12C mutation. Druggability is high for KRAS G12C specifically, though broader targeting of other oncogenic KRAS mutations (G12D, G12V, G13D, etc.) remains an active area of research with fewer approved agents. The target is among the most extensively studied in cancer biology with strong disease validation across multiple tumor types.",
+    "evidence_gaps": [
+      "Approved drugs (sotorasib, adagrasib) are mutation-specific (G12C only); druggability of other common KRAS mutants (G12D, G12V, G13D) is less established with no approved drugs",
+      "Median IC50 of ~1020 nM suggests many chemical matter entries are only moderately potent, indicating the full mutant landscape remains challenging",
+      "Resistance mechanisms (e.g., secondary KRAS mutations, bypass signaling via PINK1/mitophagy as noted in recent literature) are not fully addressed by current approved agents",
+      "No information provided on PK/ADME profiles of the broader chemical series beyond approved drugs",
+      "Wild-type KRAS selectivity windows for non-G12C inhibitors are not characterized in the provided data",
+      "Combination therapy strategies and biomarker-driven patient selection beyond G12C mutation status are incompletely defined"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "best_resolution_angstrom": 0.953,
+    "ligand_bound_count": 20,
+    "alphafold_mean_plddt": 91.5,
+    "alphafold_high_confidence_fraction": 0.926,
+    "pdb_ids": [
+      "9IAY",
+      "9IAW",
+      "12XE",
+      "8ONV",
+      "6P0Z",
+      "9IB5",
+      "8AZZ",
+      "8AZX",
+      "8B00",
+      "8TVK",
+      "4QL3",
+      "8AZV",
+      "9IB4",
+      "9E3S",
+      "8AZY",
+      "12LA",
+      "8B78",
+      "9N44",
+      "8AFB",
+      "8FMI"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL2189121",
+    "total_ic50_entries": 5903,
+    "median_ic50_nm": 1020.0,
+    "approved_drug_count": 2,
+    "approved_drugs": [
+      "SOTORASIB",
+      "ADAGRASIB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42892656",
+      "42886799",
+      "42885664",
+      "42881251",
+      "42874557",
+      "42863460",
+      "42858298",
+      "42854602",
+      "42853888",
+      "42848681",
+      "42845417",
+      "42840361",
+      "42833861",
+      "42829084",
+      "42816600",
+      "42814800",
+      "42808388",
+      "42804710",
+      "42794623",
+      "42793232"
+    ]
+  },
+  "data_gaps": {}
+}

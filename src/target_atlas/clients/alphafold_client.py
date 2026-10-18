@@ -1,4 +1,6 @@
 import httpx
+
+from target_atlas.utils.http import http_client
 from pydantic import BaseModel, Field
 
 
@@ -14,7 +16,7 @@ class AlphaFoldResult(BaseModel):
 
 
 def fetch_alphafold(uniprot_id: str) -> AlphaFoldResult | None:
-    with httpx.Client(timeout=15.0) as client:
+    with http_client(timeout=15.0) as client:
         response = client.get(f"{ALPHAFOLD_API}/{uniprot_id}")
 
         # 404 — valid ID format but not in AlphaFold DB

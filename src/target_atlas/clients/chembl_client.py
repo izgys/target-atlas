@@ -1,6 +1,9 @@
 import httpx
+
+from target_atlas.utils.http import http_client
 from pydantic import BaseModel
 import statistics
+from functools import lru_cache
 
 
 CHEMBL_API = "https://www.ebi.ac.uk/chembl/api/data"
@@ -60,37 +63,32 @@ def fetch_approved_drugs(uniprot_id: str) -> list[Inhibitor]:
     return _fetch_drug_mechanisms(chembl_id)
 
 
+@lru_cache(maxsize=32)
 def _resolve_chembl_target_id(uniprot_id: str) -> str | None:
     """
     Resolve a UniProt accession to a ChEMBL target ID.
-    Retries once on 500 errors — transient server failures are common.
+    Transient server failures are retried by the shared HTTP client;
+    the result is memoised because bioactivity and drug fetches both need it.
     """
-    import time
-    
-    for attempt in range(2):  # try twice
-        with httpx.Client(timeout=60.0) as client:
-            response = client.get(
-                f"{CHEMBL_API}/target",
-                params={
-                    "target_components__accession": uniprot_id,
-                    "format": "json",
-                    "limit": 1,
-                },
-                follow_redirects=True,
-            )
-            
-            if response.status_code == 500 and attempt == 0:
-                time.sleep(2)  # wait 2 seconds and retry
-                continue
-                
-            response.raise_for_status()
-            data = response.json()
-            targets = data.get("targets", [])
-            if not targets:
-                return None
-            return targets[0].get("target_chembl_id")
-    
-    return None
+    with http_client(timeout=60.0) as client:
+        response = client.get(
+            f"{CHEMBL_API}/target",
+            params={
+                "target_components__accession": uniprot_id,
+                # An accession also appears in protein families, complexes
+                # and PPI targets — only the single-protein target is ours
+                "target_type": "SINGLE PROTEIN",
+                "format": "json",
+                "limit": 1,
+            },
+            follow_redirects=True,
+        )
+        response.raise_for_status()
+        targets = response.json().get("targets", [])
+
+    if not targets:
+        return None
+    return targets[0].get("target_chembl_id")
 
 
 def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
@@ -101,7 +99,7 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
 
     while True:
         # New client per request — avoids session timeout on long loops
-        with httpx.Client(timeout=60.0) as client:
+        with http_client(timeout=60.0) as client:
             response = client.get(
                 f"{CHEMBL_API}/activity",
                 params={
@@ -150,7 +148,7 @@ def _fetch_drug_mechanisms(chembl_target_id: str) -> list[Inhibitor]:
     Filters at query level — only returns Phase 4 approved drugs.
     Names are fetched separately from the molecule endpoint.
     """
-    with httpx.Client(timeout=15.0) as client:
+    with http_client(timeout=15.0) as client:
 
         # Step 1 — get approved mechanisms only (max_phase=4 at query level)
         response = client.get(

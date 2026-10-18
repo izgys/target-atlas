@@ -1,5 +1,5 @@
 from target_atlas.clients.chembl_client import fetch_bioactivity, fetch_approved_drugs
-from target_atlas.clients.pubmed_client import fetch_publications
+from target_atlas.clients.pubmed_client import count_publications, fetch_publications
 from target_atlas.state import TargetAtlasState
 
 
@@ -24,6 +24,10 @@ def literature_agent(state: TargetAtlasState) -> dict:
         agent treats it as an evidence gap. Network failures are
         caught and written to agent_errors.
 
+        Bioactivity and approved drugs come from different ChEMBL
+        endpoints and are fetched independently: a failed activity
+        request must not also discard the drug list.
+
     Args:
         state: TargetAtlasState with uniprot_id and gene_name populated
 
@@ -37,7 +41,6 @@ def literature_agent(state: TargetAtlasState) -> dict:
 
     # --- ChEMBL bioactivity ---
     bioactivity_summary = None
-    known_inhibitors = []
 
     try:
         # fetch_bioactivity returns None if target not in ChEMBL
@@ -49,18 +52,26 @@ def literature_agent(state: TargetAtlasState) -> dict:
                 f"Target {uniprot_id} not found in ChEMBL — "
                 f"no bioactivity data available"
             )
-        else:
-            # Only fetch approved drugs if target exists in ChEMBL
-            known_inhibitors = fetch_approved_drugs(uniprot_id)
 
     except Exception as e:
         errors["literature_agent_chembl"] = f"ChEMBL fetch failed: {str(e)}"
 
+    # --- ChEMBL approved drugs ---
+    # Returns [] if the target is not in ChEMBL, so no need to gate on bioactivity
+    known_inhibitors = []
+
+    try:
+        known_inhibitors = fetch_approved_drugs(uniprot_id)
+    except Exception as e:
+        errors["literature_agent_chembl_drugs"] = f"ChEMBL drug fetch failed: {str(e)}"
+
     # --- PubMed publications ---
     recent_publications = []
+    publication_total_count = 0
 
     try:
         recent_publications = fetch_publications(gene_name)
+        publication_total_count = count_publications(gene_name)
     except Exception as e:
         errors["literature_agent_pubmed"] = f"PubMed fetch failed: {str(e)}"
 
@@ -68,5 +79,6 @@ def literature_agent(state: TargetAtlasState) -> dict:
         "bioactivity_summary": bioactivity_summary,
         "known_inhibitors": known_inhibitors,
         "recent_publications": recent_publications,
+        "publication_total_count": publication_total_count,
         "agent_errors": errors,
     }

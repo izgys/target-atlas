@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, TypedDict
+from typing import Literal, NotRequired, TypedDict
 from pydantic import BaseModel, Field
 
 
@@ -90,6 +90,7 @@ class TargetAtlasState(TypedDict):
 
     # --- Structure agent outputs ---
     pdb_structures: list[PDBStructure]
+    pdb_total_count: int                     # all PDB entries, not just the detailed ones
     alphafold_result: AlphaFoldResult | None
     binding_sites: list[BindingSite]
 
@@ -98,6 +99,7 @@ class TargetAtlasState(TypedDict):
     bioactivity_summary: BioactivitySummary | None
     disease_associations: list[DiseaseAssociation]
     recent_publications: list[Publication]
+    publication_total_count: int             # all PubMed title hits, not just the recent ones
 
     # --- Reasoning agent outputs ---
     druggability_assessment: DruggabilityAssessment | None
@@ -106,3 +108,21 @@ class TargetAtlasState(TypedDict):
     run_id: str
     timestamp: str
     agent_errors: dict[str, str]             # agent_name -> error message if failed
+    output_dir: NotRequired[str]             # where report_generator writes; default "results"
+
+
+# agent_errors key for each data source. A key present means the fetch
+# raised — except ChEMBL bioactivity, whose key also records "not found".
+SOURCE_ERROR_KEYS = {
+    "pdb": "structure_agent_pdb",
+    "alphafold": "structure_agent_alphafold",
+    "chembl": "literature_agent_chembl",
+    "chembl_drugs": "literature_agent_chembl_drugs",
+    "pubmed": "literature_agent_pubmed",
+}
+
+
+def retrieval_failed(state: TargetAtlasState, source: str) -> bool:
+    """True if the source's fetch failed, as opposed to returning no data."""
+    error = state.get("agent_errors", {}).get(SOURCE_ERROR_KEYS[source])
+    return bool(error) and "failed" in error

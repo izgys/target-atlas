@@ -1,4 +1,6 @@
 import httpx
+
+from target_atlas.utils.http import http_client
 from pydantic import BaseModel
 
 
@@ -46,7 +48,7 @@ def _fetch_by_id(uniprot_id: str) -> UniProtResult:
     """Fetch a UniProt entry directly by accession ID."""
     url = f"{UNIPROT_API}/{uniprot_id.upper()}"
     
-    with httpx.Client(timeout=10.0) as client:
+    with http_client(timeout=10.0) as client:
         response = client.get(url, params={"format": "json"})
         response.raise_for_status()
         data = response.json()
@@ -56,7 +58,7 @@ def _fetch_by_id(uniprot_id: str) -> UniProtResult:
 
 def _search_by_name(name: str) -> UniProtResult:
     """Search UniProt by protein or gene name, return top reviewed hit."""
-    with httpx.Client(timeout=10.0) as client:
+    with http_client(timeout=10.0) as client:
         response = client.get(
             f"{UNIPROT_API}/search",
             params={

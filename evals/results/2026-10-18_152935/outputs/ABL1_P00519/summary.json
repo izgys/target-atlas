@@ -1,0 +1,96 @@
+{
+  "target": {
+    "uniprot_id": "P00519",
+    "gene_name": "ABL1",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "ccffaaad-2378-4359-a100-3895475f2c10",
+    "timestamp": "2026-10-18T13:32:45.362308"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "ABL1 is one of the best-validated and most extensively drugged kinase targets in oncology, with 7 approved small-molecule inhibitors, over 5,000 ChEMBL IC50 entries, and multiple ultra-high-resolution crystal structures including ligand-bound complexes. The target is robustly implicated in chronic myeloid leukemia (CML) via the BCR::ABL1 fusion, and recent literature confirms continued active clinical and translational investigation. Druggability is definitively high across all dimensions.",
+    "evidence_gaps": [
+      "AlphaFold mean pLDDT is moderate (63.4%), reflecting disordered regions (e.g., SH2-kinase linker, N-terminal cap), but this is not a concern given abundant experimental PDB structures",
+      "Resistance mutations (e.g., T315I gatekeeper) remain a therapeutic challenge; coverage of resistant mutant structures and chemical matter could be more comprehensively assessed",
+      "Regorafenib is listed as an ABL1 inhibitor but is primarily known as a multi-kinase inhibitor; its ABL1-specific pharmacology may not be a primary indication driver",
+      "No explicit data provided on allosteric inhibitor coverage (e.g., asciminib/STAMP inhibitors) beyond ATP-competitive agents",
+      "Disease indications beyond CML (e.g., Philadelphia chromosome-positive ALL, solid tumors with ABL1 fusions) not deeply enumerated in the provided evidence"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "best_resolution_angstrom": 1.03,
+    "ligand_bound_count": 16,
+    "alphafold_mean_plddt": 63.38,
+    "alphafold_high_confidence_fraction": 0.46299999999999997,
+    "pdb_ids": [
+      "5OAZ",
+      "7PVS",
+      "4J9C",
+      "4J9F",
+      "7PW2",
+      "3EG3",
+      "4J9E",
+      "5DC4",
+      "4J9D",
+      "5HU9",
+      "7PVQ",
+      "5DC9",
+      "4JJC",
+      "4JJD",
+      "5NP2",
+      "1BBZ",
+      "4JJB",
+      "7PVR",
+      "2HZI",
+      "4J9H"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL1862",
+    "total_ic50_entries": 5295,
+    "median_ic50_nm": 140.0,
+    "approved_drug_count": 7,
+    "approved_drugs": [
+      "NILOTINIB HYDROCHLORIDE MONOHYDRATE",
+      "DASATINIB ANHYDROUS",
+      "BOSUTINIB",
+      "REGORAFENIB",
+      "IMATINIB MESYLATE",
+      "ASCIMINIB",
+      "UMBRALISIB TOSYLATE"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42886318",
+      "42876003",
+      "42794529",
+      "42706170",
+      "42681542",
+      "42667018",
+      "42611361",
+      "42575681",
+      "42573582",
+      "42533241",
+      "42522808",
+      "42509252",
+      "42485989",
+      "42463944",
+      "42455913",
+      "42366058",
+      "42365381",
+      "42360373",
+      "42357552",
+      "42289259"
+    ]
+  },
+  "data_gaps": {}
+}

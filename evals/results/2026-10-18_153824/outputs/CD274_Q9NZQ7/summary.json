@@ -1,0 +1,96 @@
+{
+  "target": {
+    "uniprot_id": "Q9NZQ7",
+    "gene_name": "CD274",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "5321fb6c-da24-4987-84c9-6a941efa80b7",
+    "timestamp": "2026-10-18T13:40:48.704242"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "CD274 (PD-L1) is a highly validated oncology target with 5 approved monoclonal antibody drugs, extensive structural data including sub-1Å resolution crystal structures, and over 1700 ChEMBL IC50 entries. It represents one of the most clinically and chemically validated immune checkpoint targets in oncology, with active ongoing research into small molecule inhibitors complementing the established biologics.",
+    "evidence_gaps": [
+      "Small molecule druggability at the PD-1/PD-L1 interface remains challenging due to the protein-protein interaction nature of the binding site, and clinical translation of small molecules has lagged behind biologics",
+      "Resistance mechanisms (e.g., CD274 loss, alternative checkpoint upregulation) are incompletely characterized and may limit therapeutic durability",
+      "The literature count of 105 papers specifically with 'CD274' in the title likely underrepresents the broader PD-L1 literature (which uses multiple names), so true publication volume is substantially higher",
+      "Biomarker strategies for patient selection (e.g., PD-L1 expression thresholds, tumor mutational burden) remain imperfect predictors of response",
+      "Pharmacological differences between the five approved antibodies (e.g., Fc effector function, binding epitopes) and their clinical differentiation are not fully resolved"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 80,
+    "best_resolution_angstrom": 0.99,
+    "ligand_bound_count": 13,
+    "alphafold_mean_plddt": 88.25,
+    "alphafold_high_confidence_fraction": 0.844,
+    "pdb_ids": [
+      "5O45",
+      "8ALX",
+      "6NP9",
+      "9I0U",
+      "6YCR",
+      "8AOK",
+      "13DT",
+      "7CZD",
+      "5JDS",
+      "5N2F",
+      "9QSM",
+      "8ZNL",
+      "5C3T",
+      "7OUN",
+      "6NNV",
+      "13DS",
+      "8XR5",
+      "4Z18",
+      "7C88",
+      "6PV9"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL3580522",
+    "total_ic50_entries": 1772,
+    "median_ic50_nm": 210.5,
+    "approved_drug_count": 5,
+    "approved_drugs": [
+      "ATEZOLIZUMAB",
+      "DURVALUMAB",
+      "AVELUMAB",
+      "SUGEMALIMAB",
+      "COSIBELIMAB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 105,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42848101",
+      "42494073",
+      "42298533",
+      "41986305",
+      "41662873",
+      "41655134",
+      "41549178",
+      "41494987",
+      "41409271",
+      "40983009",
+      "40509568",
+      "40362483",
+      "40184088",
+      "39710370",
+      "39694703",
+      "39248214",
+      "38575994",
+      "38354028",
+      "38287556",
+      "37939515"
+    ]
+  },
+  "data_gaps": {}
+}

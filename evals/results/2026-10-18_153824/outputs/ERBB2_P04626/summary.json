@@ -1,0 +1,105 @@
+{
+  "target": {
+    "uniprot_id": "P04626",
+    "gene_name": "ERBB2",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "da73d715-379b-4908-b325-c5272523af3d",
+    "timestamp": "2026-10-18T13:38:45.879245"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "ERBB2 (HER2) is one of the most extensively validated oncology drug targets in existence, with 14 approved drugs, over 5,200 ChEMBL IC50 entries, 63 PDB structures (best resolution 1.25Å), and nearly 2,500 PubMed publications. The target has high-confidence structural, chemical, and literature support across multiple drug modalities including small molecules (kinase inhibitors), monoclonal antibodies, and antibody-drug conjugates. Druggability is unambiguously high.",
+    "evidence_gaps": [
+      "AlphaFold mean pLDDT of 74.0 (66.8% high-confidence fraction) suggests disordered regions exist — likely the extracellular domain linkers and intracellular unstructured segments — but this is well-compensated by abundant experimental PDB structures",
+      "Only 9 of the top 20 PDB structures have ligand bound, meaning some crystal forms may not capture clinically relevant binding modes (e.g., allosteric sites, antibody epitopes)",
+      "Resistance mechanisms (e.g., HER2 mutations, truncated p95-HER2, downstream pathway bypass) are well-documented but may limit efficacy of existing agents; novel agents targeting resistance are an active but still-evolving area",
+      "Median IC50 of ~301 nM across ChEMBL entries indicates that many compounds in the dataset are moderate potency; selectivity profiles versus EGFR/ERBB4 are not captured here",
+      "Emerging indications (bladder cancer, colorectal cancer, liver fibrosis) seen in recent literature reflect expanding biology but clinical validation in non-breast/gastric settings is still maturing"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 63,
+    "best_resolution_angstrom": 1.25,
+    "ligand_bound_count": 9,
+    "alphafold_mean_plddt": 74.0,
+    "alphafold_high_confidence_fraction": 0.6679999999999999,
+    "pdb_ids": [
+      "1MFG",
+      "8VB5",
+      "8JYR",
+      "8U8X",
+      "8JYQ",
+      "7PCD",
+      "5TQS",
+      "1MFL",
+      "4GFU",
+      "6LBX",
+      "9IUT",
+      "5MY6",
+      "3PP0",
+      "1QR1",
+      "3H3B",
+      "2A91",
+      "4NND",
+      "1N8Z",
+      "4HRL",
+      "8VQD"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL1824",
+    "total_ic50_entries": 5265,
+    "median_ic50_nm": 301.0,
+    "approved_drug_count": 14,
+    "approved_drugs": [
+      "TRASTUZUMAB",
+      "PERTUZUMAB",
+      "TRASTUZUMAB EMTANSINE",
+      "LAPATINIB DITOSYLATE",
+      "AFATINIB DIMALEATE",
+      "TUCATINIB",
+      "MASOPROCOL",
+      "NERATINIB",
+      "DACOMITINIB",
+      "MARGETUXIMAB",
+      "DACOMITINIB ANHYDROUS",
+      "NERATINIB MALEATE",
+      "TRASTUZUMAB DERUXTECAN",
+      "ZANIDATAMAB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 2443,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42732768",
+      "42718780",
+      "42704362",
+      "42645361",
+      "42622787",
+      "42616845",
+      "42536421",
+      "42532350",
+      "42530945",
+      "42493450",
+      "42479431",
+      "42430697",
+      "42421039",
+      "28520364",
+      "42365196",
+      "42348190",
+      "42296698",
+      "42192045",
+      "42176792",
+      "42157284"
+    ]
+  },
+  "data_gaps": {}
+}

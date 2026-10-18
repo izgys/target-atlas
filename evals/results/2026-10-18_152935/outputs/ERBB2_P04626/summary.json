@@ -1,0 +1,103 @@
+{
+  "target": {
+    "uniprot_id": "P04626",
+    "gene_name": "ERBB2",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "6dd0013a-a1a8-4c67-a93e-0c57a304ef00",
+    "timestamp": "2026-10-18T13:30:23.323888"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "ERBB2 (HER2) is one of the most extensively validated and drugged oncology targets in human medicine, with 14 approved therapeutics including monoclonal antibodies, small-molecule kinase inhibitors, and antibody-drug conjugates. Structural data are outstanding (1.25 Å best resolution, 9 ligand-bound structures), chemical space is deeply explored (>5,000 IC50 entries, median ~300 nM), and the literature base is enormous with continuing active clinical research across multiple tumor types. Druggability is unambiguously high across all evidence dimensions.",
+    "evidence_gaps": [
+      "AlphaFold mean pLDDT of 74 with only ~67% high-confidence fraction suggests disordered regions (likely extracellular or linker domains) not fully resolved even in crystal structures — conformational flexibility of certain loops may limit structure-based drug design in those regions",
+      "Resistance mechanisms (e.g., ERBB2 mutations, PI3K pathway bypass, HER3 upregulation) are well-documented but not quantified in the evidence provided here, which limits assessment of next-generation drug design opportunities",
+      "Median IC50 of ~300 nM across the ChEMBL dataset indicates that many compounds have moderate potency — the distribution of truly sub-nanomolar tool compounds vs. weaker scaffolds is not broken down",
+      "Disease indication breadth (bladder, colorectal, liver fibrosis, osteoarthritis in recent titles) suggests expanding biology beyond breast/gastric cancer — full translational validation in non-oncology indications remains incomplete",
+      "No explicit data on selectivity profiles or off-target liabilities across the ERBB family (EGFR, HER3, HER4) are summarised here"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "best_resolution_angstrom": 1.25,
+    "ligand_bound_count": 9,
+    "alphafold_mean_plddt": 74.0,
+    "alphafold_high_confidence_fraction": 0.6679999999999999,
+    "pdb_ids": [
+      "1MFG",
+      "8VB5",
+      "8JYR",
+      "8U8X",
+      "8JYQ",
+      "7PCD",
+      "5TQS",
+      "1MFL",
+      "4GFU",
+      "6LBX",
+      "9IUT",
+      "5MY6",
+      "3PP0",
+      "1QR1",
+      "3H3B",
+      "2A91",
+      "4NND",
+      "1N8Z",
+      "4HRL",
+      "8VQD"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL1824",
+    "total_ic50_entries": 5265,
+    "median_ic50_nm": 301.0,
+    "approved_drug_count": 14,
+    "approved_drugs": [
+      "TRASTUZUMAB",
+      "PERTUZUMAB",
+      "TRASTUZUMAB EMTANSINE",
+      "LAPATINIB DITOSYLATE",
+      "AFATINIB DIMALEATE",
+      "TUCATINIB",
+      "MASOPROCOL",
+      "NERATINIB",
+      "DACOMITINIB",
+      "MARGETUXIMAB",
+      "DACOMITINIB ANHYDROUS",
+      "NERATINIB MALEATE",
+      "TRASTUZUMAB DERUXTECAN",
+      "ZANIDATAMAB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42732768",
+      "42718780",
+      "42704362",
+      "42645361",
+      "42622787",
+      "42616845",
+      "42536421",
+      "42532350",
+      "42530945",
+      "42493450",
+      "42479431",
+      "42430697",
+      "42421039",
+      "28520364",
+      "42365196",
+      "42348190",
+      "42296698",
+      "42192045",
+      "42176792",
+      "42157284"
+    ]
+  },
+  "data_gaps": {}
+}

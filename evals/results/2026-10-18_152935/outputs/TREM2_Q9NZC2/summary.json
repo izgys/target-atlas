@@ -1,0 +1,84 @@
+{
+  "target": {
+    "uniprot_id": "Q9NZC2",
+    "gene_name": "TREM2",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "208c421f-234d-45e6-8382-7d3a2374223a",
+    "timestamp": "2026-10-18T13:36:18.185846"
+  },
+  "assessment": {
+    "druggability_score": "medium",
+    "structural_confidence": "high",
+    "chemical_confidence": "none",
+    "literature_confidence": "high",
+    "summary": "TREM2 is a well-validated immunoreceptor target with strong structural characterisation (15 PDB structures, best resolution 1.47Å, 11 ligand-bound) and robust disease association in Alzheimer's disease, neurodegeneration, and cancer immunology. However, chemical tractability is currently low with zero IC50 entries in ChEMBL, though very recent (2026) preclinical and first-in-human data for an oral small-molecule agonist (VG-3927/SAR448851) suggests the target is actively being pursued and may soon acquire meaningful chemical data. Overall druggability is rated medium, reflecting strong structural and biological validation offset by a near-absent public small-molecule dataset.",
+    "evidence_gaps": [
+      "No IC50 or bioactivity entries in ChEMBL for this target despite emerging small-molecule agonist programmes — public chemical data is essentially absent",
+      "No approved drugs; clinical-stage molecules are very early (first-in-human 2026)",
+      "Mechanism of TREM2 agonism via small molecules is not yet well characterised in the public domain — binding sites and SAR are largely proprietary",
+      "AlphaFold pLDDT is moderate (76.8 mean, 61% >70) suggesting some structural regions, potentially the transmembrane/intracellular region, lack high confidence — may limit full-length druggability modelling",
+      "Context-dependency of TREM2 signalling (neurodegeneration vs. cancer, agonism vs. antagonism) means the therapeutic modality is not yet settled — different disease indications may require opposing pharmacologies",
+      "No published clinical efficacy or safety data yet for any TREM2-directed small molecule"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 15,
+    "best_resolution_angstrom": 1.466,
+    "ligand_bound_count": 11,
+    "alphafold_mean_plddt": 76.75,
+    "alphafold_high_confidence_fraction": 0.613,
+    "pdb_ids": [
+      "6XDS",
+      "5UD8",
+      "9PWN",
+      "8T51",
+      "8T59",
+      "6B8O",
+      "5UD7",
+      "6Y6C",
+      "6YMQ",
+      "5ELI",
+      "6YYE",
+      "9PX5",
+      "6Z0G",
+      "6Z0H",
+      "6Z0I"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL6196124",
+    "total_ic50_entries": 0,
+    "median_ic50_nm": null,
+    "approved_drug_count": 0,
+    "approved_drugs": []
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42877165",
+      "42875426",
+      "42873892",
+      "42872589",
+      "42865133",
+      "42856794",
+      "42818059",
+      "42812614",
+      "42806169",
+      "42800026",
+      "42794453",
+      "42779834",
+      "42768009",
+      "42714953",
+      "42705697",
+      "42694654",
+      "42689388",
+      "42687907",
+      "42658581",
+      "42629379"
+    ]
+  },
+  "data_gaps": {}
+}

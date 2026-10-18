@@ -219,4 +219,7 @@ __marimo__/
 
 # Scratch files — local debugging scripts, not committed
 scratch/
-results/
+/results/
+
+# Eval API cache — regenerated on first run
+evals/cache/

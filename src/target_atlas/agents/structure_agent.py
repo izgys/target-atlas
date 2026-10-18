@@ -1,4 +1,4 @@
-from target_atlas.clients.pdb_client import fetch_structures
+from target_atlas.clients.pdb_client import count_structures, fetch_structures
 from target_atlas.clients.alphafold_client import fetch_alphafold
 from target_atlas.state import TargetAtlasState
 
@@ -44,8 +44,10 @@ def structure_agent(state: TargetAtlasState) -> dict:
 
     # --- PDB structures ---
     pdb_structures = []
+    pdb_total_count = 0
     try:
         pdb_structures = fetch_structures(uniprot_id)
+        pdb_total_count = count_structures(uniprot_id)
     except Exception as e:
         errors["structure_agent_pdb"] = f"PDB fetch failed: {str(e)}"
 
@@ -58,6 +60,7 @@ def structure_agent(state: TargetAtlasState) -> dict:
 
     return {
         "pdb_structures": pdb_structures,
+        "pdb_total_count": pdb_total_count,
         "alphafold_result": alphafold_result,
         "agent_errors": errors,
     }

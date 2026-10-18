@@ -1,0 +1,109 @@
+# Evaluation set for Target Atlas — expected facts per target.
+#
+# Every fact below was verified against the live APIs on 2026-10-18:
+#   - uniprot_id:     UniProt search, gene:<symbol> AND reviewed:true AND organism_id:9606
+#   - pdb_ids:        RCSB polymer entities map to uniprot_id (landmark structures,
+#                     not the highest-resolution ones — see the rank note below)
+#   - approved_drugs: ChEMBL mechanisms with max_phase=4 on the SINGLE PROTEIN target.
+#                     Parent names only: a salt form (e.g. IMATINIB MESYLATE) counts
+#                     as a match for its parent.
+#   - pmids:          PubMed ESummary, landmark papers for the target
+#
+# Rank note: the pipeline keeps the 20 best-resolution PDB entries and the 20 most
+# recent PubMed papers. Landmark structures and papers are often outside those
+# windows (EGFR 1M17 ranks 191 of 393 by resolution), so per-category recall shows
+# how much of the well-known evidence the retrieval strategy actually surfaces.
+#
+# profile: dense | undruggable_history | biologics | sparse
+# sparse targets are expected to be reported with gaps, not with high confidence.
+
+targets:
+  - query: EGFR
+    uniprot_id: P00533
+    profile: dense
+    aliases: [EGFR, ErbB1, HER1, epidermal growth factor receptor]
+    expected:
+      pdb_ids: [1M17, 4HJO, 2ITY, 4ZAU, 1IVO]        # erlotinib x2, gefitinib, osimertinib, EGF complex
+      approved_drugs: [GEFITINIB, ERLOTINIB, OSIMERTINIB, CETUXIMAB]
+      pmids: ["15118073", "15118125"]                 # Lynch 2004 NEJM, Paez 2004 Science
+
+  - query: ERBB2
+    uniprot_id: P04626
+    profile: dense
+    aliases: [ERBB2, HER2, HER-2, neu]
+    expected:
+      pdb_ids: [3PP0, 1N8Z, 1S78]                     # kinase domain, trastuzumab Fab, pertuzumab Fab
+      approved_drugs: [TRASTUZUMAB, PERTUZUMAB, LAPATINIB, TUCATINIB]
+      pmids: ["3798106"]                              # Slamon 1987 Science
+
+  - query: BRAF
+    uniprot_id: P15056
+    profile: dense
+    aliases: [BRAF, B-Raf]
+    expected:
+      pdb_ids: [3OG7, 1UWH, 4MNE]                     # vemurafenib (V600E), sorafenib, BRAF:MEK1
+      approved_drugs: [VEMURAFENIB, DABRAFENIB, ENCORAFENIB]
+      pmids: ["12068308", "20818844"]                 # Davies 2002 Nature, Flaherty 2010 NEJM
+
+  - query: KRAS
+    uniprot_id: P01116
+    profile: undruggable_history
+    aliases: [KRAS, K-Ras, KRas]
+    expected:
+      pdb_ids: [6OIM, 6UT0, 4OBE]                     # sotorasib, adagrasib, GDP-bound
+      approved_drugs: [SOTORASIB, ADAGRASIB]
+      pmids: ["24256730", "32955176"]                 # Ostrem 2013 Nature, Hong 2020 NEJM
+
+  - query: ABL1
+    uniprot_id: P00519
+    profile: dense
+    aliases: [ABL1, ABL, BCR-ABL, "BCR::ABL1"]
+    expected:
+      pdb_ids: [2HYY, 3CS9, 2GQG]                     # imatinib (human; 1IEP is mouse), nilotinib, dasatinib
+      approved_drugs: [IMATINIB, NILOTINIB, DASATINIB, ASCIMINIB]
+      pmids: ["11287972"]                             # Druker 2001 NEJM
+
+  - query: BTK
+    uniprot_id: Q06187
+    profile: dense
+    aliases: [BTK, Bruton]
+    expected:
+      pdb_ids: [5P9J, 3GEN, 6E4F]                     # ibrutinib, B43 complex, nemtabrutinib
+      approved_drugs: [IBRUTINIB, ACALABRUTINIB, ZANUBRUTINIB]
+      pmids: ["8380905", "23782158"]                  # Vetrie 1993 Nature, Byrd 2013 NEJM
+
+  - query: JAK2
+    uniprot_id: O60674
+    profile: dense
+    aliases: [JAK2, Janus kinase 2]
+    expected:
+      pdb_ids: [6VGL, 3KRR, 2B7A]                     # ruxolitinib, quinoxaline, early inhibitor complex
+      approved_drugs: [RUXOLITINIB, FEDRATINIB, PACRITINIB]
+      pmids: ["15793561"]                             # James 2005 Nature (V617F)
+
+  - query: CD274
+    uniprot_id: Q9NZQ7
+    profile: biologics
+    aliases: [CD274, PD-L1, PDL1, B7-H1]
+    expected:
+      pdb_ids: [4ZQK, 3BIK, 5J89]                     # PD-1/PD-L1 x2, BMS small-molecule complex
+      approved_drugs: [ATEZOLIZUMAB, DURVALUMAB, AVELUMAB]
+      pmids: ["10581077", "11015443"]                 # Dong 1999 Nat Med, Freeman 2000 J Exp Med
+
+  - query: IL6R
+    uniprot_id: P08887
+    profile: biologics
+    aliases: [IL6R, IL-6R, IL-6 receptor, interleukin-6 receptor]
+    expected:
+      pdb_ids: [1N26, 1P9M]                           # ectodomain, IL-6/IL-6R/gp130 hexamer
+      approved_drugs: [TOCILIZUMAB, SARILUMAB]
+      pmids: ["3136546"]                              # Yamasaki 1988 Science
+
+  - query: TREM2
+    uniprot_id: Q9NZC2
+    profile: sparse
+    aliases: [TREM2]
+    expected:
+      pdb_ids: [5UD7, 5ELI, 6YYE]                     # Ig-like domain, ectodomain, scFv complex
+      approved_drugs: []                              # ChEMBL target CHEMBL6196124 exists, no approved drugs
+      pmids: ["23150908", "23150934"]                 # Guerreiro 2013 NEJM, Jonsson 2013 NEJM

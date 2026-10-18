@@ -1,4 +1,4 @@
-# Target Atlas — Multi-agent protein target analysis for drug discovery
+# Target Atlas — An LLM workflow for protein target analysis in drug discovery
 
 **Author:** Iker Zapirain Gysling  
 **Status:** Active development — v0.1  
@@ -6,21 +6,23 @@
 
 ---
 
-**Target Atlas** takes a UniProt ID or gene name and produces a calibrated druggability assessment — synthesising structural, bioactivity, and literature evidence from five sources into a structured report with explicit confidence levels and reasoning trace.
+**Target Atlas** takes a UniProt ID or gene name and produces an evidence-graded druggability assessment — synthesising structural, bioactivity, and literature evidence from five sources into a structured report with explicit confidence levels and reasoning trace.
 
-```bash
+```python
 # Analyse any human protein target by UniProt ID or gene name
-python -m target_atlas.cli run --target EGFR
+from target_atlas.graph import app
+app.invoke({"query": "EGFR"})
 
-# Output: results/EGFR/report.md + results/EGFR/summary.json
+# Output: results/EGFR_P00533/report.md + results/EGFR_P00533/summary.json
 ```
 
 **What makes it technically interesting:**
-- Multi-agent LangGraph pipeline — five specialised agents with shared state and independent failure isolation
+- LangGraph workflow — five specialised nodes with shared state and independent failure isolation
 - Synthesises five heterogeneous sources — UniProt, PDB, AlphaFold, ChEMBL, PubMed — into one structured assessment
-- Calibrated confidence scoring — structural, chemical, and literature confidence scored independently before synthesis
+- Separate confidence scoring — structural, chemical, and literature confidence scored independently before synthesis
 - Honest uncertainty — evidence gaps explicitly enumerated, not silently omitted
-- Production-minded — config-driven (Hydra), experiment tracked (MLflow), Docker packaged, CI tested
+- Measured, not asserted — a deterministic evaluation harness scores every change against API-verified facts for ten targets
+- Resilient retrieval — shared HTTP layer with retries and backoff, plus an on-disk cache for reproducible evaluation runs
 
 ---
 
@@ -40,11 +42,11 @@ Target Atlas takes a protein target — a UniProt ID (`P00533`) or a gene name (
 
 - **UniProt** — canonical protein identity, gene name, organism, curation status
 - **PDB** — experimental structures ranked by resolution, ligand-bound states
-- **AlphaFold** — predicted structure confidence (pLDDT fractions) for targets with sparse experimental coverage
-- **ChEMBL** — bioactivity density, IC50 distribution, approved drugs
-- **PubMed** — recent publications, disease associations, field activity
+- **AlphaFold** — predicted structure confidence (pLDDT fractions), as a cross-check on experimental coverage
+- **ChEMBL** — bioactivity counts, median IC50, approved drugs
+- **PubMed** — recent publications and literature volume
 
-A reasoning agent (Claude) synthesises all retrieved evidence into a calibrated druggability assessment with explicit confidence levels and evidence gaps. Two outputs are produced:
+A reasoning node (Claude) synthesises all retrieved evidence into a druggability assessment with explicit confidence levels and evidence gaps. Two outputs are produced:
 
 - `report.md` — structured markdown report for human review
 - `summary.json` — machine-readable summary for downstream pipelines
@@ -70,7 +72,7 @@ User input: "EGFR" or "P00533"
          ▼
 ┌──────────────────┐
 │ literature_agent │  ChEMBL API → bioactivity summary, approved drugs
-│                  │  PubMed E-utils → recent publications, disease context
+│                  │  PubMed E-utils → recent publications, literature volume
 └────────┬─────────┘
          │
          ▼
@@ -85,7 +87,7 @@ User input: "EGFR" or "P00533"
 └──────────────────┘
 ```
 
-All agents communicate exclusively through a shared `TargetAtlasState` TypedDict — no agent calls another directly. LangGraph manages execution order and state persistence. API failures are caught at the agent level, written to `agent_errors`, and the pipeline continues with whatever data was successfully retrieved.
+All nodes communicate exclusively through a shared `TargetAtlasState` TypedDict — no node calls another directly. LangGraph manages execution order and the flow of state between nodes. API failures are caught at the node level, written to `agent_errors`, and the pipeline continues with whatever data was successfully retrieved.
 
 **Key components:**
 
@@ -97,18 +99,21 @@ All agents communicate exclusively through a shared `TargetAtlasState` TypedDict
 | `src/target_atlas/clients/alphafold_client.py` | AlphaFold EBI API — pLDDT confidence |
 | `src/target_atlas/clients/chembl_client.py` | ChEMBL REST API — bioactivity + approved drugs |
 | `src/target_atlas/clients/pubmed_client.py` | NCBI E-utils — recent publications |
-| `src/target_atlas/agents/` | LangGraph agent nodes |
+| `src/target_atlas/agents/` | LangGraph nodes (the `*_agent` file names predate the workflow framing) |
 | `src/target_atlas/graph.py` | LangGraph graph definition and compilation |
 
 ---
 
 ## Key Design Decisions
 
+**Why a workflow, not an agent?**
+Only one node calls an LLM, and the path through the graph is fixed in code: every target is resolved, then gets the same structural, chemical and literature retrieval, then one synthesis step. Nothing is gained by letting a model decide which database to query next — the evidence a druggability assessment needs is known in advance. A fixed workflow is cheaper, faster, reproducible and evaluable step by step. The LLM is used where judgement is actually needed: weighing heterogeneous evidence and naming what is missing. An agentic design would earn its place for open-ended follow-up questions (e.g. deciding to search for a specific mutation or a related target), which is outside the scope of v0.1.
+
 **Why LangGraph rather than a sequential script?**
-A sequential script is simpler but fragile — a single API failure aborts the entire run. LangGraph provides node-level error isolation (failures write to `agent_errors` and the graph continues), conditional routing, and checkpointing. The shared state architecture also makes each agent independently testable with mock inputs, without requiring the full pipeline to run.
+A sequential script is simpler but fragile — a single API failure aborts the entire run. LangGraph provides node-level error isolation (failures write to `agent_errors` and the graph continues), conditional routing, and checkpointing. The shared state architecture also makes each node independently testable with mock inputs, without requiring the full pipeline to run.
 
 **Why five separate client files rather than one data fetcher?**
-Encapsulation. Each client knows everything about one external API and nothing about the pipeline it serves. If PDB changes their API (as RCSB has done twice), only `pdb_client.py` changes — no agent code is touched. This was validated during development when both the AlphaFold API (field rename: `meanPlddt` → `globalMetricValue`) and ChEMBL API (endpoint rename: `drug_mechanism` → `mechanism`) changed mid-build.
+Encapsulation. Each client knows everything about one external API and nothing about the pipeline it serves. If PDB changes their API (as RCSB has done twice), only `pdb_client.py` changes — no node code is touched. This was validated during development when both the AlphaFold API (field rename: `meanPlddt` → `globalMetricValue`) and ChEMBL API (endpoint rename: `drug_mechanism` → `mechanism`) changed mid-build.
 
 **Why Claude API for the reasoning node rather than a local model?**
 The reasoning node requires multi-source synthesis, uncertainty quantification, and structured output — tasks where frontier models significantly outperform smaller local models at this stage. The tradeoff is cost and latency per run. A local model (Llama, Mistral) is a planned v0.2 option for offline or cost-sensitive deployments.
@@ -132,21 +137,67 @@ Three targets were selected to span the evidence density spectrum:
 
 | Target | UniProt | Rationale |
 |---|---|---|
-| EGFR | P00533 | High evidence density — 200+ PDB structures, 25,758 ChEMBL IC50 entries, 20 approved drugs |
-| TREM2 | Q9NZC2 | Sparse evidence — few structures, no ChEMBL entry, active neuroscience literature |
-| IL-6R | P08887 | Medium evidence — validated immunology target, approved biologics, moderate small molecule data |
+| EGFR | P00533 | Dense evidence — 393 PDB entries, 26,600 ChEMBL IC50 entries, 15 approved drugs (20 ChEMBL entries including salt forms) |
+| TREM2 | Q9NZC2 | Sparse chemistry — 15 PDB entries, a ChEMBL target with no IC50 data or approved drugs, active neuroscience literature |
+| IL-6R | P08887 | Biologics-only — validated immunology target, two approved antibodies (tocilizumab, sarilumab), no small-molecule IC50 data |
 
-Example outputs for all three targets are committed to `examples/`.
+Outputs for all three targets, generated by the evaluation harness, are in [`examples/`](examples/).
+
+### Evaluation harness
+
+`evals/run_eval.py` runs the full pipeline on ten targets — dense kinases (EGFR, ERBB2, BRAF, ABL1, BTK, JAK2), a historically "undruggable" target (KRAS), biologics-dominated targets (CD274/PD-L1, IL6R) and a sparse one (TREM2) — and scores each output against API-verified expected facts in `evals/targets.yaml`. Scoring is deterministic; no LLM judges another LLM.
+
+| Metric | What it checks |
+|---|---|
+| Identity | The gene name resolves to the correct canonical UniProt accession |
+| Fact recall | Fraction of expected PDB entries, approved drugs and key PMIDs present in `summary.json` |
+| Citation validity | Fraction of PDB IDs and PMIDs in the output (retrieved or written by Claude) that exist and belong to the target |
+| Gap honesty | Fraction of consistency checks passed between what was retrieved and what the assessment claims (e.g. no ChEMBL bioactivity → chemical confidence low/none and the gap is listed) |
+
+API responses are cached in `evals/cache/`, so reruns are fast and reproducible; the Claude call is never cached. Each run writes `results.json`, `results.md` and all outputs to `evals/results/<timestamp>/`, tagged with the git commit.
+
+```bash
+python -m evals.run_eval                      # all ten targets
+python -m evals.run_eval --targets EGFR TREM2 # a subset
+```
+
+**Results** (`claude-sonnet-4-6`, commit `7bfa378`):
+
+| Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty |
+|---|---|---|---|---|---|---|---|
+| EGFR | 1.00 | 0.36 | 0/5 | 4/4 | 0/2 | 1.00 | 1.00 |
+| ERBB2 | 1.00 | 0.75 | 2/3 | 4/4 | 0/1 | 1.00 | 1.00 |
+| BRAF | 1.00 | 0.38 | 0/3 | 3/3 | 0/2 | 1.00 | 1.00 |
+| KRAS | 1.00 | 0.29 | 0/3 | 2/2 | 0/2 | 1.00 | 1.00 |
+| ABL1 | 1.00 | 0.50 | 0/3 | 4/4 | 0/1 | 1.00 | 1.00 |
+| BTK | 1.00 | 0.62 | 2/3 | 3/3 | 0/2 | 1.00 | 1.00 |
+| JAK2 | 1.00 | 0.43 | 0/3 | 3/3 | 0/1 | 1.00 | 1.00 |
+| CD274 | 1.00 | 0.38 | 0/3 | 3/3 | 0/2 | 1.00 | 1.00 |
+| IL6R | 1.00 | 0.80 | 2/2 | 2/2 | 0/1 | 1.00 | 0.67 |
+| TREM2 | 1.00 | 0.60 | 3/3 | — | 0/2 | 1.00 | 1.00 |
+| **Mean** | **1.00** | **0.51** | | | | **1.00** | **0.97** |
+
+How to read it:
+- **Approved drugs are recovered in full (28/28)**, and identity resolution is correct for all ten targets.
+- **Low PDB and PMID recall is a retrieval-strategy limit, not a retrieval failure.** The pipeline details the 20 best-resolved structures and the 20 most recent papers; landmark entries fall outside those windows (EGFR's erlotinib complex 1M17 ranks 191 of 393 by resolution). See Known Failure Modes.
+- **Citation validity is currently a plumbing check.** Claude did not write any PDB ID or PMID into its own text in these runs, so every citation came straight from an API. The metric becomes a hallucination check once reports cite IDs in prose.
+- **The one gap-honesty failure is IL6R:** zero ChEMBL IC50 entries, yet chemical confidence was scored `medium`. That is defensible given two approved antibodies, but it falls outside the rubric, which has no notion of biologics.
 
 ### Confidence scoring
 
-Structural, chemical, and literature confidence are each scored independently on a four-level scale (`high`, `medium`, `low`, `none`) before being synthesised into an overall druggability assessment. Confidence levels are derived from explicit thresholds, not learned — making them inspectable and adjustable.
+Structural, chemical, and literature confidence are each scored independently on a four-level scale (`high`, `medium`, `low`, `none`) before being synthesised into an overall druggability assessment. The thresholds are explicit and live in the reasoning prompt, not learned — making them inspectable and adjustable. Claude applies them and occasionally overrides them; see Rubric overrides below.
 
 ### Known Failure Modes
 
 - **Salt form duplication in approved drugs**: ChEMBL treats drug salts as separate entities (Osimertinib and Osimertinib Mesylate appear as distinct entries). Deduplication via `molecule_hierarchy` is a planned fix.
-- **ChEMBL target coverage gaps**: targets without a ChEMBL entry (e.g. TREM2 at time of writing) return no bioactivity data. The system reports this explicitly as an evidence gap rather than silently omitting it.
-- **PubMed noise**: gene name search returns papers with passing mentions of the target, not only primary target biology papers. Publication count is therefore an upper bound on field activity.
+- **ChEMBL coverage gaps**: targets without bioactivity data (TREM2 has a ChEMBL target but no IC50 entries) are reported explicitly as an evidence gap rather than silently omitted.
+- **Retrieval windows miss landmark evidence**: only the 20 best-resolved PDB entries and the 20 most recent PubMed papers are retrieved in detail, so well-known drug-bound structures and foundational papers are usually absent (PDB recall 9/31, PMID recall 0/16 in the evaluation). Total counts are passed to the reasoning node, so coverage is not understated.
+- **Gene-symbol literature search**: PubMed is searched by official gene symbol in the title, which undercounts targets known by another name (CD274: 105 papers, while the field writes "PD-L1").
+- **Rubric overrides**: Claude sometimes overrides the numeric confidence thresholds with prior knowledge, scoring literature confidence `high` for CD274 (105 papers) and IL6R (226) where the rubric says `medium`. That is correct for CD274 given the undercount, but it means confidence is not purely evidence-derived. The same happens when a source fails: in one ADRB2 run where ChEMBL returned a server error, chemical confidence was scored `high` from prior knowledge rather than `none`. Failed retrievals are labelled as failures rather than absences in both the reasoning context and the report, and every API call retries transient errors with backoff, but the scoring rule for failed sources is not yet enforced.
+- **No biologics in the chemical rubric**: chemical confidence is defined on small-molecule IC50 counts, so antibody-only targets (IL6R) fall outside it.
+- **"Ligand-bound" includes ions and glycans**: any non-polymer entity counts as a ligand, which overstates small-molecule structural evidence.
+- **Fragment structures rank as "best"**: PDB entries are ranked by resolution only, with no check of how much of the target they contain. For ADRB2 (outside the eval set), the reported best structure, 1GQ4 at 1.9 Å, is a NHERF PDZ domain bound to a short ADRB2 tail peptide; the best receptor structure is 2RH1 at 2.4 Å. Peptide and fragment complexes can inflate structural confidence and crowd real structures out of the top 20.
+- **IC50-only chemistry**: bioactivity counts and the median use IC50 values only. Kinase data is mostly IC50, but GPCR and nuclear-receptor data is mostly Ki, EC50 or Kd (ADRB2: 1,665 IC50 vs 1,862 Ki entries), so chemical evidence is systematically undercounted for non-enzyme target classes.
 - **AlphaFold per-residue mapping**: the current API returns pre-computed confidence fractions, not per-residue scores. Binding-site-specific confidence assessment requires a second API call to the confidence JSON endpoint — planned for v0.2.
 - **Human targets only**: UniProt search is currently restricted to `organism_id:9606`. Non-human targets require manual UniProt ID input.
 
@@ -174,18 +225,23 @@ uv sync
 ### Set API key
 
 ```bash
-export ANTHROPIC_API_KEY=your_key_here
+export ANTHROPIC_API_KEY=your_key_here    # macOS/Linux
+set ANTHROPIC_API_KEY=your_key_here       # Windows
 ```
+
+Or put `ANTHROPIC_API_KEY=...` in a `.env` file in the project root.
 
 ### Run a target analysis
 
+A command-line interface is coming in v0.1; until then, run the graph from Python:
+
 ```bash
-python -m target_atlas.cli run --target P00533
-# or by gene name
-python -m target_atlas.cli run --target EGFR
+python -c "from target_atlas.graph import app; app.invoke({'query': 'EGFR'})"
+# or by UniProt ID
+python -c "from target_atlas.graph import app; app.invoke({'query': 'P00533'})"
 ```
 
-Outputs are written to `results/<target>/`:
+Outputs are written to `results/<gene>_<uniprot_id>/`:
 - `report.md` — structured druggability assessment
 - `summary.json` — machine-readable summary
 
@@ -193,7 +249,8 @@ Outputs are written to `results/<target>/`:
 
 ```bash
 docker build -t target-atlas .
-docker run -e ANTHROPIC_API_KEY=your_key -v $(pwd)/results:/app/results target-atlas --target P00533
+docker run -e ANTHROPIC_API_KEY=your_key -v $(pwd)/results:/app/results target-atlas --target P00533   # macOS/Linux
+docker run -e ANTHROPIC_API_KEY=your_key -v %cd%/results:/app/results target-atlas --target P00533     # Windows
 ```
 
 ---
@@ -207,7 +264,7 @@ target-atlas/
 ├── pyproject.toml
 ├── Dockerfile                          # coming v0.1
 │
-├── configs/
+├── configs/                            # coming v0.1 (Hydra)
 │   ├── agents.yaml                     # model, temperature, max_tokens
 │   └── apis.yaml                       # endpoints, timeouts, rate limits
 │
@@ -215,26 +272,33 @@ target-atlas/
 │   └── target_atlas/
 │       ├── state.py                    # TargetAtlasState TypedDict + Pydantic models
 │       ├── graph.py                    # LangGraph graph definition
-│       ├── cli.py                      # Typer CLI entrypoint
+│       ├── cli.py                      # Typer CLI entrypoint (coming v0.1)
 │       ├── agents/
 │       │   ├── input_parser.py
 │       │   ├── structure_agent.py
 │       │   ├── literature_agent.py
 │       │   ├── reasoning_agent.py
 │       │   └── report_generator.py
+│       ├── utils/
+│       │   └── http.py                 # shared HTTP client: retries + eval cache
 │       └── clients/
 │           ├── uniprot_client.py       # ✓ implemented
 │           ├── pdb_client.py           # ✓ implemented
 │           ├── alphafold_client.py     # ✓ implemented
 │           ├── chembl_client.py        # ✓ implemented
-│           └── pubmed_client.py        # in progress
+│           └── pubmed_client.py        # ✓ implemented
+│
+├── evals/
+│   ├── targets.yaml                    # expected facts for 10 targets
+│   ├── run_eval.py                     # harness + four metrics
+│   └── results/                        # one folder per run
 │
 ├── examples/
-│   ├── egfr_P00533/                    # coming v0.1
-│   ├── trem2_Q9NZC2/                   # coming v0.1
-│   └── il6r_P08887/                    # coming v0.1
+│   ├── egfr_P00533/                    # report.md + summary.json
+│   ├── trem2_Q9NZC2/
+│   └── il6r_P08887/
 │
-├── tests/
+├── tests/                              # coming v0.1
 │   ├── test_state.py
 │   ├── test_structure_agent.py
 │   └── test_graph.py
@@ -244,38 +308,43 @@ target-atlas/
 │
 └── .github/
     └── workflows/
-        └── ci.yml                      # lint + smoke tests
+        └── ci.yml                      # lint + smoke tests (coming v0.1)
 ```
 
 ---
 
 ## Roadmap
 
-**v0.1 (current sprint — target: May 30, 2026)**
+**v0.1 (in progress)**
 - [x] Project scaffold, dependencies, pyproject.toml
 - [x] State schema — TargetAtlasState TypedDict + all Pydantic models
 - [x] UniProt client — name and ID resolution
 - [x] PDB client — resolution-ranked structure retrieval
 - [x] AlphaFold client — pLDDT confidence fractions
 - [x] ChEMBL client — bioactivity summary + approved drugs
-- [x] PubMed client — recent publications and disease context
-- [x] Reasoning agent — Claude API with structured output
-- [ ] Report generator — markdown + JSON outputs
-- [ ] LangGraph graph — all five agent nodes wired
+- [x] PubMed client — recent publications and literature volume
+- [x] Reasoning node — Claude API with structured output
+- [x] Report generator — markdown + JSON outputs
+- [x] LangGraph graph — all five nodes wired
+- [x] Evaluation harness — 10 targets, four deterministic metrics, cached APIs
 - [ ] Hydra config system
 - [ ] MLflow experiment tracking
 - [ ] Dockerfile
 - [ ] Smoke tests + GitHub Actions CI
-- [ ] Three benchmark example outputs (EGFR, TREM2, IL-6R)
+- [x] Three benchmark example outputs (EGFR, TREM2, IL-6R)
 
 **v0.2 (planned)**
-- [ ] Parallel agent execution (structure + literature agents concurrently)
+- [ ] Parallel node execution (structure + literature nodes concurrently)
 - [ ] Per-residue pLDDT mapping via AlphaFold confidence endpoint
 - [ ] Europe PMC as third literature source
 - [ ] Pocket detection integration (fpocket) for structural druggability
 - [ ] ChromaDB persistent memory for cross-target comparison
 - [ ] Benchmarking against expert druggability consensus (published targets)
 - [ ] Salt form deduplication in ChEMBL approved drugs
+- [ ] Structure coverage filter — rank PDB entries by target-residue coverage (SIFTS) so peptide and fragment complexes no longer count as best structures
+- [ ] pChEMBL-based chemistry — count IC50, Ki, Kd and EC50 activities on one scale, so non-kinase target classes are not undercounted
+- [ ] Prompt rule for failed sources — score the dimension `none` and state any prior-knowledge expectation separately
+- [ ] Held-out evaluation set outside the kinase-heavy ten (e.g. ADRB2, ESR1) and UniProt-ID queries
 - [ ] Non-human organism support
 
 ---

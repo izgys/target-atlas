@@ -1,4 +1,7 @@
 import httpx
+from functools import lru_cache
+
+from target_atlas.utils.http import http_client
 from pydantic import BaseModel
 
 
@@ -31,7 +34,7 @@ def fetch_structures(uniprot_id: str, max_structures: int = 20) -> list[PDBStruc
         list of PDBStructure sorted by resolution ascending (best first)
         empty list if no structures found or API unavailable
     """
-    pdb_ids = _search_pdb_ids(uniprot_id)
+    pdb_ids, _ = _search_pdb_ids(uniprot_id)
 
     if not pdb_ids:
         return []
@@ -52,7 +55,20 @@ def fetch_structures(uniprot_id: str, max_structures: int = 20) -> list[PDBStruc
     return structures
 
 
-def _search_pdb_ids(uniprot_id: str) -> list[str]:
+def count_structures(uniprot_id: str) -> int:
+    """
+    Total number of PDB entries for a UniProt accession.
+
+    fetch_structures details only the best-resolved few; this is the full
+    count (EGFR: ~400), which the reasoning agent needs to judge coverage.
+    Reuses the cached search response — no extra API call.
+    """
+    _, total = _search_pdb_ids(uniprot_id)
+    return total
+
+
+@lru_cache(maxsize=32)
+def _search_pdb_ids(uniprot_id: str) -> tuple[list[str], int]:
     """
     Search RCSB for all PDB IDs associated with a UniProt accession.
 
@@ -60,7 +76,7 @@ def _search_pdb_ids(uniprot_id: str) -> list[str]:
     the UniProt cross-reference field specifically.
 
     Returns:
-        list of PDB IDs as strings, empty list if none found
+        (PDB IDs, total match count) — up to 200 IDs, ([], 0) if none found
     """
     # RCSB uses a JSON query language for structured searches
     # We search the polymer entity uniprot accession field specifically
@@ -89,18 +105,18 @@ def _search_pdb_ids(uniprot_id: str) -> list[str]:
         }
     }
 
-    with httpx.Client(timeout=15.0) as client:
+    with http_client(timeout=15.0) as client:
         response = client.post(RCSB_SEARCH_API, json=query)
 
         # 204 means no results found — not an error
         if response.status_code == 204:
-            return []
+            return [], 0
 
         response.raise_for_status()
         data = response.json()
 
     results = data.get("result_set", [])
-    return [r["identifier"] for r in results]
+    return [r["identifier"] for r in results], data.get("total_count", len(results))
 
 
 def _fetch_structure_details(pdb_id: str) -> PDBStructure | None:
@@ -115,7 +131,7 @@ def _fetch_structure_details(pdb_id: str) -> PDBStructure | None:
     """
     url = f"{RCSB_DATA_API}/{pdb_id.upper()}"
 
-    with httpx.Client(timeout=10.0) as client:
+    with http_client(timeout=10.0) as client:
         response = client.get(url)
 
         # Some PDB IDs in search results may be obsolete or redirected
