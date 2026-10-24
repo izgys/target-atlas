@@ -23,6 +23,7 @@ Usage:
     python -m evals.run_eval --no-cache
     python -m evals.run_eval --set agents.reasoning.temperature=0
     python -m evals.run_eval --no-mlflow
+    python -m evals.run_eval --repeats 5     # mean ± SD over 5 full passes
 
 The resolved config (configs/ plus any --set overrides) is saved in
 results.json, so every run records the settings that produced it. The run is
@@ -34,6 +35,7 @@ import re
 import statistics
 import subprocess
 import time
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -276,35 +278,104 @@ def _fmt(value: float | None) -> str:
     return "n/a" if value is None else f"{value:.2f}"
 
 
+def _fmt_stat(stat: dict | None) -> str:
+    """'0.92 ± 0.11' over several repeats, '0.92' for a single one."""
+    if not stat:
+        return "n/a"
+    if stat["n"] == 1:
+        return _fmt(stat["mean"])
+    return f"{stat['mean']:.2f} ± {stat['sd']:.2f}"
+
+
+def _fmt_levels(counts: dict[str, int]) -> str:
+    """{'medium': 4, 'high': 1} -> 'medium×4 high×1'"""
+    return " ".join(f"{level}×{n}" for level, n in sorted(counts.items(), key=lambda kv: -kv[1]))
+
+
 def build_markdown(run: dict) -> str:
+    n = run["repeats"]
+    temperature = run.get("config", {}).get("agents", {}).get("reasoning", {}).get("temperature")
     lines = [
         f"# Target Atlas eval — {run['started']}",
         "",
-        f"Commit `{run['git_commit']}` · model `{run['model']}` · cache `{run['cache']}`",
+        f"Commit `{run['git_commit']}` · model `{run['model']}` · temperature `{temperature}` · "
+        f"cache `{run['cache']}` · repeats {n}",
         *([f"Overrides: `{' '.join(run['overrides'])}`"] if run.get("overrides") else []),
         "",
-        "| Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty |",
-        "|---|---|---|---|---|---|---|---|",
     ]
-    for r in run["targets"]:
-        if "error" in r:
-            lines.append(f"| {r['query']} | error: {r['error'][:60]} | | | | | | |")
+    if n > 1:
+        lines += [
+            f"Scores are mean ± sample SD over {n} repeats of the whole eval. "
+            "Retrieval is cached, so variation comes from the Claude call.",
+            "",
+        ]
+
+    lines += [
+        "| Target | Identity | Fact recall | Citation validity | Gap honesty | Verdict stable |",
+        "|---|---|---|---|---|---|",
+    ]
+    for t in run["targets"]:
+        if t["scored"] == 0:
+            lines.append(f"| {t['query']} | error in all {n} repeats | | | | |")
             continue
-        cats = r["fact_recall"]["categories"]
+        stable = {True: "yes", False: "**no**", None: "n/a"}[t["levels_stable"]]
+        if n > 1 and t["levels_stable"] is not None:
+            stable += f" ({t['levels_agree']}/{t['scored']})"
+        errors = f" · error ×{t['errors']}" if t["errors"] else ""
+        lines.append(
+            f"| {t['query']} | {_fmt_stat(t['identity'])} | {_fmt_stat(t['fact_recall'])} | "
+            f"{_fmt_stat(t['citation'])} | {_fmt_stat(t['gap_honesty'])} | {stable}{errors} |"
+        )
+    agg = run["aggregate"]
+    lines.append(
+        f"| **Mean** | {_fmt_stat(agg['identity'])} | {_fmt_stat(agg['fact_recall'])} | "
+        f"{_fmt_stat(agg['citation'])} | {_fmt_stat(agg['gap_honesty'])} | "
+        f"{run['levels_stable_count']}/{len(run['targets'])} stable |"
+    )
+
+    # Verdicts that changed between repeats — the evidence for run-to-run variation
+    unstable = [t for t in run["targets"] if t["levels_stable"] is False]
+    if unstable:
+        lines += ["", "**Verdicts that changed between repeats**", ""]
+        for t in unstable:
+            changed = [
+                f"{field} {_fmt_levels(counts)}"
+                for field, counts in t["levels"].items() if len(counts) > 1
+            ]
+            lines.append(f"- {t['query']}: " + "; ".join(changed))
+
+    # Per-category recall comes from retrieval only, which is cached: repeat 1 stands for all
+    lines += [
+        "",
+        "**Fact recall by category** (retrieval only — identical across repeats)",
+        "",
+        "| Target | PDB | Drugs | PMIDs |",
+        "|---|---|---|---|",
+    ]
+    for result in run["passes"][0]["targets"]:
+        if "error" in result:
+            continue
+        cats = result["fact_recall"]["categories"]
         per_cat = [
             f"{cats[c]['found']}/{cats[c]['expected']}" if cats[c]["expected"] else "—"
             for c in ("pdb_ids", "approved_drugs", "pmids")
         ]
-        lines.append(
-            f"| {r['query']} | {_fmt(r['identity']['score'])} | {_fmt(r['fact_recall']['score'])} | "
-            + " | ".join(per_cat)
-            + f" | {_fmt(r['citation']['score'])} | {_fmt(r['gap_honesty']['score'])} |"
-        )
-    agg = run["aggregate"]
-    lines.append(
-        f"| **Mean** | {_fmt(agg['identity'])} | {_fmt(agg['fact_recall'])} | | | | "
-        f"{_fmt(agg['citation'])} | {_fmt(agg['gap_honesty'])} |"
-    )
+        lines.append(f"| {result['query']} | " + " | ".join(per_cat) + " |")
+
+    if n > 1:
+        lines += [
+            "",
+            "**Mean per repeat**",
+            "",
+            "| Repeat | Identity | Fact recall | Citation validity | Gap honesty |",
+            "|---|---|---|---|---|",
+        ]
+        for p in run["passes"]:
+            a = p["aggregate"]
+            lines.append(
+                f"| {p['repeat']} | {_fmt(a['identity'])} | {_fmt(a['fact_recall'])} | "
+                f"{_fmt(a['citation'])} | {_fmt(a['gap_honesty'])} |"
+            )
     return "\n".join(lines) + "\n"
 
 
@@ -325,6 +396,119 @@ def _git_commit() -> str:
 
 
 # ---------------------------------------------------------------------------
+# Repeats
+# ---------------------------------------------------------------------------
+
+LEVEL_FIELDS = ["druggability_score", "structural_confidence", "chemical_confidence", "literature_confidence"]
+
+
+def _levels(state: dict) -> dict | None:
+    """The four verdicts Claude gave, or None if the reasoning step failed."""
+    assessment = state.get("druggability_assessment")
+    if assessment is None:
+        return None
+    return {field: getattr(assessment, field) for field in LEVEL_FIELDS}
+
+
+def run_pass(targets: list[dict], outputs_dir: Path, label: str = "") -> dict:
+    """Run and score every target once. Returns {'targets': [...], 'aggregate': {...}}."""
+    results = []
+    for target in targets:
+        query = target["query"]
+        print(f"[{query}]{label} running pipeline...", flush=True)
+        t0 = time.perf_counter()
+        try:
+            state, summary = run_target(query, outputs_dir)
+            result = {
+                "query": query,
+                "identity": score_identity(target, summary),
+                "fact_recall": score_fact_recall(target, summary),
+                "citation": score_citation_validity(target, summary, state),
+                "gap_honesty": score_gap_honesty(target, summary),
+                "levels": _levels(state),
+                "pipeline_errors": summary.get("data_gaps", {}),
+            }
+        except Exception as e:
+            result = {"query": query, "error": f"{type(e).__name__}: {e}"}
+        result["seconds"] = round(time.perf_counter() - t0, 1)
+        results.append(result)
+
+        scores = "  ".join(
+            f"{m}={_fmt(result[m]['score'])}" for m in METRICS if m in result
+        ) or result.get("error")
+        print(f"[{query}]{label} {result['seconds']}s  {scores}", flush=True)
+
+    aggregate = {}
+    for metric in METRICS:
+        values = [r[metric]["score"] for r in results if metric in r and r[metric]["score"] is not None]
+        aggregate[metric] = statistics.mean(values) if values else None
+    return {"targets": results, "aggregate": aggregate}
+
+
+def _stats(values: list[float]) -> dict | None:
+    """Mean, sample SD, min, max and n — None if there are no values."""
+    if not values:
+        return None
+    return {
+        "mean": statistics.mean(values),
+        "sd": statistics.stdev(values) if len(values) > 1 else 0.0,
+        "min": min(values),
+        "max": max(values),
+        "n": len(values),
+    }
+
+
+def summarize(passes: list[dict]) -> dict:
+    """
+    Combine repeated passes into per-target and overall statistics.
+
+    Per target: mean/SD/min/max of each metric over the repeats in which it
+    was scored, how many repeats failed, and how often Claude's four verdicts
+    (druggability + three confidences) came out the same.
+
+    Overall: mean/SD of the per-repeat means, so the spread describes how
+    much the headline number moves from one full eval to the next.
+    """
+    queries = [r["query"] for r in passes[0]["targets"]]
+    targets = []
+    for query in queries:
+        results = [r for p in passes for r in p["targets"] if r["query"] == query]
+        scored = [r for r in results if "error" not in r]
+        summary = {
+            "query": query,
+            "scored": len(scored),
+            "errors": len(results) - len(scored),
+        }
+        for metric in METRICS:
+            summary[metric] = _stats(
+                [r[metric]["score"] for r in scored if r[metric]["score"] is not None]
+            )
+
+        verdicts = [r["levels"] for r in scored if r.get("levels")]
+        summary["levels"] = {
+            field: dict(Counter(v[field] for v in verdicts)) for field in LEVEL_FIELDS
+        } if verdicts else {}
+        if verdicts:
+            combos = Counter(tuple(v[f] for f in LEVEL_FIELDS) for v in verdicts)
+            summary["levels_agree"] = combos.most_common(1)[0][1]   # repeats matching the commonest verdict
+            summary["levels_stable"] = len(combos) == 1
+        else:
+            summary["levels_agree"] = 0
+            summary["levels_stable"] = None
+        targets.append(summary)
+
+    aggregate = {
+        metric: _stats([p["aggregate"][metric] for p in passes if p["aggregate"][metric] is not None])
+        for metric in METRICS
+    }
+    return {
+        "aggregate": aggregate,
+        "targets": targets,
+        "levels_stable_count": sum(t["levels_stable"] is True for t in targets),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -337,7 +521,13 @@ def main(argv: list[str] | None = None) -> None:
         help="config override, repeatable, e.g. --set agents.reasoning.temperature=0",
     )
     parser.add_argument("--no-mlflow", action="store_true", help="do not log the run to MLflow")
+    parser.add_argument(
+        "--repeats", type=int, default=1,
+        help="run the whole eval N times and report mean and spread (default 1)",
+    )
     args = parser.parse_args(argv)
+    if args.repeats < 1:
+        parser.error("--repeats must be at least 1")
 
     cfg = load_config(args.set)
 
@@ -351,37 +541,14 @@ def main(argv: list[str] | None = None) -> None:
 
     started = datetime.now()
     run_dir = RESULTS_DIR / started.strftime("%Y-%m-%d_%H%M%S")
-    outputs_dir = run_dir / "outputs"
 
-    results = []
-    for target in targets:
-        query = target["query"]
-        print(f"[{query}] running pipeline...", flush=True)
-        t0 = time.perf_counter()
-        try:
-            state, summary = run_target(query, outputs_dir)
-            result = {
-                "query": query,
-                "identity": score_identity(target, summary),
-                "fact_recall": score_fact_recall(target, summary),
-                "citation": score_citation_validity(target, summary, state),
-                "gap_honesty": score_gap_honesty(target, summary),
-                "pipeline_errors": summary.get("data_gaps", {}),
-            }
-        except Exception as e:
-            result = {"query": query, "error": f"{type(e).__name__}: {e}"}
-        result["seconds"] = round(time.perf_counter() - t0, 1)
-        results.append(result)
-
-        scores = "  ".join(
-            f"{m}={_fmt(result[m]['score'])}" for m in METRICS if m in result
-        ) or result.get("error")
-        print(f"[{query}] {result['seconds']}s  {scores}", flush=True)
-
-    aggregate = {}
-    for metric in METRICS:
-        values = [r[metric]["score"] for r in results if metric in r and r[metric]["score"] is not None]
-        aggregate[metric] = statistics.mean(values) if values else None
+    # Repeats are the outer loop: if a run is interrupted, every finished
+    # repeat is complete (all targets), so partial results stay comparable.
+    passes = []
+    for k in range(1, args.repeats + 1):
+        label = f" r{k}/{args.repeats}" if args.repeats > 1 else ""
+        result = run_pass(targets, run_dir / "outputs" / f"repeat_{k}", label)
+        passes.append({"repeat": k, **result})
 
     run = {
         "started": started.isoformat(timespec="seconds"),
@@ -390,8 +557,9 @@ def main(argv: list[str] | None = None) -> None:
         "overrides": args.set,
         "config": config_as_dict(cfg),
         "cache": "off" if args.no_cache else CACHE_DIR.relative_to(EVALS_DIR.parent).as_posix(),
-        "aggregate": aggregate,
-        "targets": results,
+        "repeats": args.repeats,
+        **summarize(passes),
+        "passes": passes,
     }
 
     run_dir.mkdir(parents=True, exist_ok=True)

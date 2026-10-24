@@ -4,7 +4,9 @@
 
 reasoning:
   model: claude-sonnet-4-6
-  # 1.0 is the Anthropic API default, so this reproduces the behaviour before
-  # config existed. null omits the parameter entirely.
-  temperature: 1.0
+  # 0 makes Claude pick the most likely token at each step. This reduces
+  # run-to-run variation but does NOT guarantee identical outputs from an
+  # API model, so evals are reported over repeats (target-atlas eval --repeats 5).
+  # null omits the parameter (API default, 1.0).
+  temperature: 0
   max_tokens: 2000

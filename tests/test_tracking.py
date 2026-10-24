@@ -10,6 +10,7 @@ import pytest
 
 import evals.run_eval as run_eval
 import evals.tracking as tracking
+from tests.helpers import levels, make_pass, result
 
 
 def _score(value):
@@ -18,7 +19,14 @@ def _score(value):
 
 @pytest.fixture
 def eval_run():
-    """A results.json-shaped dict: two scored targets, one failed target."""
+    """A results.json-shaped dict: 2 repeats, EGFR stable, TREM2 varies, KRAS fails once."""
+    passes = [
+        make_pass(1, [result("EGFR", recall=0.36), result("TREM2", recall=0.6, gap=0.8, citation=None),
+                      result("KRAS")]),
+        make_pass(2, [result("EGFR", recall=0.36), result("TREM2", recall=0.6, gap=1.0, citation=None,
+                                                          verdict=levels(structural="medium")),
+                      {"query": "KRAS", "error": "ConnectError: boom"}]),
+    ]
     return {
         "started": "2026-10-24T20:00:00",
         "git_commit": "abc1234-dirty",
@@ -27,14 +35,9 @@ def eval_run():
         "overrides": ["agents.reasoning.temperature=0"],
         "config": {"agents": {"reasoning": {"model": "claude-sonnet-4-6", "temperature": 0}},
                    "apis": {"pdb": {"max_structures": 20}}},
-        "aggregate": {"identity": 1.0, "fact_recall": 0.5, "citation": 1.0, "gap_honesty": 0.9},
-        "targets": [
-            {"query": "EGFR", "identity": _score(1.0), "fact_recall": _score(0.36),
-             "citation": _score(1.0), "gap_honesty": _score(1.0)},
-            {"query": "TREM2", "identity": _score(1.0), "fact_recall": _score(0.6),
-             "citation": _score(None), "gap_honesty": _score(0.8)},
-            {"query": "KRAS", "error": "ConnectError: boom"},
-        ],
+        "repeats": 2,
+        **run_eval.summarize(passes),
+        "passes": passes,
     }
 
 
@@ -57,15 +60,33 @@ def test_flatten_turns_nested_config_into_dotted_params():
     assert tracking.flatten({"a": {"b": {"c": 1}}, "d": None}) == {"a.b.c": "1", "d": "None"}
 
 
-def test_eval_metrics_are_metric_first_with_means_and_errors(eval_run):
+def test_eval_metrics_are_metric_first_means_with_sd(eval_run):
     metrics = tracking.eval_metrics(eval_run)
 
-    assert metrics["gap_honesty/mean"] == 0.9
-    assert metrics["gap_honesty/TREM2"] == 0.8
-    assert metrics["fact_recall/EGFR"] == 0.36
+    assert metrics["gap_honesty/TREM2"] == pytest.approx(0.9)          # mean over repeats
+    assert metrics["gap_honesty/TREM2_sd"] == pytest.approx(0.1414, abs=1e-4)
+    assert metrics["fact_recall/EGFR"] == pytest.approx(0.36)
     assert "citation/TREM2" not in metrics          # None score: not logged as 0
-    assert metrics["error/KRAS"] == 1.0
-    assert metrics["targets_failed"] == 1.0
+    assert metrics["error/KRAS"] == 1.0              # failed in 1 of 2 repeats
+    assert metrics["targets_failed"] == 0.0          # KRAS still scored once
+    assert metrics["levels_stable/EGFR"] == 1.0
+    assert metrics["levels_stable/TREM2"] == 0.0
+
+
+def test_single_repeat_logs_no_sd(eval_run):
+    passes = eval_run["passes"][:1]
+    single = {**eval_run, "repeats": 1, **run_eval.summarize(passes), "passes": passes}
+    metrics = tracking.eval_metrics(single)
+
+    assert metrics["gap_honesty/TREM2"] == 0.8      # same key and meaning as before repeats existed
+    assert not any(k.endswith("_sd") for k in metrics)
+
+
+def test_repeat_metrics_are_keyed_by_step(eval_run):
+    by_repeat = tracking.repeat_metrics(eval_run)
+    assert by_repeat[1]["repeat/gap_honesty/TREM2"] == 0.8
+    assert by_repeat[2]["repeat/gap_honesty/TREM2"] == 1.0
+    assert "repeat/gap_honesty/KRAS" not in by_repeat[2]
 
 
 def test_log_eval_run_records_params_tags_metrics_and_artifacts(tmp_path, eval_run, run_dir):
@@ -77,10 +98,15 @@ def test_log_eval_run_records_params_tags_metrics_and_artifacts(tmp_path, eval_r
     assert run.data.params["agents.reasoning.temperature"] == "0"
     assert run.data.params["apis.pdb.max_structures"] == "20"
     assert run.data.params["eval.targets"] == "EGFR,TREM2,KRAS"
+    assert run.data.params["eval.repeats"] == "2"
     assert run.data.params["eval.overrides"] == "agents.reasoning.temperature=0"
     assert run.data.tags["git_commit"] == "abc1234-dirty"
     assert run.data.tags["dirty"] == "true"
-    assert run.data.metrics["gap_honesty/TREM2"] == 0.8
+    assert run.data.metrics["gap_honesty/TREM2"] == pytest.approx(0.9)
+
+    # The individual repeats are kept as metric history, one step per repeat
+    history = _client(store).get_metric_history(run_id, "repeat/gap_honesty/TREM2")
+    assert [(m.step, m.value) for m in sorted(history, key=lambda m: m.step)] == [(1, 0.8), (2, 1.0)]
 
     artifacts = {a.path for a in _client(store).list_artifacts(run_id)}
     assert {"results.json", "results.md", "outputs"} <= artifacts
@@ -113,7 +139,7 @@ def test_two_evals_land_in_one_experiment_for_comparison(tmp_path, eval_run, run
 @pytest.fixture
 def fake_eval(monkeypatch, tmp_path):
     summary = {"data_gaps": {}}
-    monkeypatch.setattr(run_eval, "run_target", lambda query, out: ({}, summary))
+    monkeypatch.setattr(run_eval, "run_target", lambda query, out: ({}, summary))   # no assessment
     monkeypatch.setattr(run_eval, "score_identity", lambda t, s: _score(1.0))
     monkeypatch.setattr(run_eval, "score_fact_recall", lambda t, s: {
         "score": 0.5,

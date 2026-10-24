@@ -5,6 +5,7 @@ Command-line interface for Target Atlas.
     target-atlas run P07550 --out reports
     target-atlas run EGFR --set agents.reasoning.temperature=0
     target-atlas eval -t EGFR -t TREM2
+    target-atlas eval --repeats 5
 
 Settings live in configs/*.yaml and are loaded with Hydra's compose API
 (target_atlas.config). Typer keeps the command line; --set passes Hydra-style
@@ -71,6 +72,9 @@ def run_evaluation(
     no_cache: bool = typer.Option(False, "--no-cache", help="Call live APIs instead of the evals/cache replay."),
     overrides: list[str] = typer.Option(None, "--set", "-s", help=SET_HELP),
     no_mlflow: bool = typer.Option(False, "--no-mlflow", help="Do not log the run to MLflow (mlruns/)."),
+    repeats: int = typer.Option(
+        1, "--repeats", "-r", min=1, help="Run the whole eval N times; report mean ± SD.",
+    ),
 ) -> None:
     """Run the evaluation harness (from the repository root)."""
     # The harness and its answer key live in the repository, not in the package
@@ -92,6 +96,8 @@ def run_evaluation(
         argv.append("--no-cache")
     if no_mlflow:
         argv.append("--no-mlflow")
+    if repeats > 1:
+        argv += ["--repeats", str(repeats)]
     for override in overrides or []:
         argv += ["--set", override]
     main(argv)

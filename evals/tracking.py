@@ -13,11 +13,16 @@ mlruns/ instead.) Browse and compare runs with:
 
 What is logged:
     params    the full resolved config, flattened (agents.reasoning.model, ...),
-              plus eval.cache, eval.targets, eval.overrides
+              plus eval.cache, eval.targets, eval.overrides, eval.repeats
     tags      git_commit, dirty, model
     metrics   <metric>/mean and <metric>/<TARGET> for the four eval metrics,
-              e.g. gap_honesty/mean, gap_honesty/TREM2. Metric-first names put
-              all targets of one metric in the same section of the UI.
+              e.g. gap_honesty/mean, gap_honesty/TREM2 — always the mean over
+              repeats (with one repeat, simply the score). With several repeats
+              also <metric>/<TARGET>_sd, and the per-repeat values under
+              repeat/<metric>/<TARGET>, logged with step = repeat number, which
+              the UI draws as a chart. levels_stable/<TARGET> is 1 when Claude's
+              four verdicts were identical in every repeat.
+              Metric-first names put all targets of one metric in one section.
     artifacts the run folder written by run_eval
 
 One MLflow run per eval (targets as metric keys, not child runs), so comparing
@@ -62,25 +67,49 @@ def flatten(data: dict, prefix: str = "") -> dict[str, str]:
 
 
 def eval_metrics(run: dict) -> dict[str, float]:
-    """Means and per-target scores as MLflow metric keys; failed targets as <TARGET>/error."""
+    """Summary metrics: means over repeats, SDs when there are several, failures, verdict stability."""
+    several = run["repeats"] > 1
     metrics = {}
     for metric in METRICS:
-        mean = run["aggregate"].get(metric)
-        if mean is not None:
-            metrics[f"{metric}/mean"] = mean
+        stat = run["aggregate"].get(metric)
+        if stat:
+            metrics[f"{metric}/mean"] = stat["mean"]
+            if several:
+                metrics[f"{metric}/mean_sd"] = stat["sd"]
 
-    for result in run["targets"]:
-        query = result["query"]
-        if "error" in result:
-            metrics[f"error/{query}"] = 1.0
-            continue
+    for target in run["targets"]:
+        query = target["query"]
+        if target["errors"]:
+            metrics[f"error/{query}"] = float(target["errors"])
         for metric in METRICS:
-            score = result.get(metric, {}).get("score")
-            if score is not None:
-                metrics[f"{metric}/{query}"] = score
+            stat = target.get(metric)
+            if stat:
+                metrics[f"{metric}/{query}"] = stat["mean"]
+                if several:
+                    metrics[f"{metric}/{query}_sd"] = stat["sd"]
+        if target["levels_stable"] is not None:
+            metrics[f"levels_stable/{query}"] = float(target["levels_stable"])
 
-    metrics["targets_failed"] = float(sum("error" in r for r in run["targets"]))
+    metrics["targets_failed"] = float(sum(t["scored"] == 0 for t in run["targets"]))
+    metrics["levels_stable/count"] = float(run["levels_stable_count"])
     return metrics
+
+
+def repeat_metrics(run: dict) -> dict[int, dict[str, float]]:
+    """Per-repeat scores keyed by repeat number, for metric history (step = repeat)."""
+    by_repeat = {}
+    for p in run["passes"]:
+        values = {
+            f"repeat/{m}/mean": p["aggregate"][m]
+            for m in METRICS if p["aggregate"][m] is not None
+        }
+        for result in p["targets"]:
+            for m in METRICS:
+                score = result.get(m, {}).get("score")
+                if score is not None:
+                    values[f"repeat/{m}/{result['query']}"] = score
+        by_repeat[p["repeat"]] = values
+    return by_repeat
 
 
 def log_eval_run(run: dict, run_dir: Path, tracking_dir: Path | None = None) -> str:
@@ -113,7 +142,11 @@ def log_eval_run(run: dict, run_dir: Path, tracking_dir: Path | None = None) -> 
             "eval.cache": run["cache"],
             "eval.targets": ",".join(r["query"] for r in run["targets"]),
             "eval.overrides": " ".join(run.get("overrides", [])) or "none",
+            "eval.repeats": run["repeats"],
         })
         mlflow.log_metrics(eval_metrics(run))
+        if run["repeats"] > 1:
+            for step, values in repeat_metrics(run).items():
+                mlflow.log_metrics(values, step=step)
         mlflow.log_artifacts(str(run_dir))
         return active.info.run_id
