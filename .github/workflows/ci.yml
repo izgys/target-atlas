@@ -1,0 +1,42 @@
+# Lint + offline tests on every push and pull request.
+# No secrets are configured: the tests mock every API and Claude, and the
+# test step runs with networking switched off at the OS level.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true          # reuse downloaded wheels between runs
+
+      # --locked fails if uv.lock is out of sync with pyproject.toml, so CI
+      # installs exactly the versions that were tested locally.
+      # 3.12 matches the local development environment.
+      - name: Install dependencies
+        run: uv sync --locked --python 3.12
+
+      - name: Lint
+        run: uv run --no-sync ruff check .
+
+      # `unshare --net` starts pytest in a new network namespace that has only
+      # a loopback interface: any real HTTP call fails, whatever the code does.
+      # sudo is needed to create the namespace; `sudo -u` drops back to the
+      # runner user so the tests don't run as root.
+      - name: Test (network off)
+        run: |
+          sudo unshare --net -- sudo -u "$USER" env -u ANTHROPIC_API_KEY \
+            .venv/bin/python -m pytest
