@@ -1,29 +1,27 @@
 from __future__ import annotations
 
 from typing import Literal, NotRequired, TypedDict
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel
+
+# The evidence models are defined once, next to the client that produces them,
+# and re-exported here. state.py used to carry its own copies, which drifted
+# (no chembl_target_id, no journal) and were never the objects in the graph.
+from target_atlas.clients.alphafold_client import AlphaFoldResult
+from target_atlas.clients.chembl_client import BioactivitySummary, Inhibitor
+from target_atlas.clients.pdb_client import PDBStructure
+from target_atlas.clients.pubmed_client import Publication
+
+__all__ = [
+    "AlphaFoldResult", "BindingSite", "BioactivitySummary", "DiseaseAssociation",
+    "DruggabilityAssessment", "Inhibitor", "PDBStructure", "Publication",
+    "SOURCE_ERROR_KEYS", "TargetAtlasState", "retrieval_failed",
+]
 
 
 # ---------------------------------------------------------------------------
-# Pydantic models — the shape of data each agent produces
+# Pydantic models owned by the state (not produced by any client yet)
 # ---------------------------------------------------------------------------
-
-class PDBStructure(BaseModel):
-    """A single experimental structure from the Protein Data Bank."""
-    pdb_id: str
-    resolution: float | None = None          # Angstroms — None for NMR/cryo-EM
-    method: str                              # X-ray, cryo-EM, NMR
-    has_ligand: bool = False
-    chain_count: int = 1
-
-
-class AlphaFoldResult(BaseModel):
-    """AlphaFold predicted structure confidence for a target."""
-    uniprot_id: str
-    mean_plddt: float = Field(..., ge=0, le=100)   # 0-100, higher = more confident
-    high_confidence_fraction: float                 # fraction of residues pLDDT > 70
-    model_url: str | None = None
-
 
 class BindingSite(BaseModel):
     """A known or predicted binding site on the target."""
@@ -32,33 +30,11 @@ class BindingSite(BaseModel):
     source: str                              # e.g. "PDB ligand", "UniProt annotation"
 
 
-class Inhibitor(BaseModel):
-    """A known small molecule inhibitor from ChEMBL."""
-    chembl_id: str
-    name: str | None = None
-    ic50_nm: float | None = None             # IC50 in nanomolar
-    mechanism: str | None = None
-
-
-class BioactivitySummary(BaseModel):
-    """Aggregate statistics over all ChEMBL bioactivity entries for a target."""
-    total_entries: int
-    median_ic50_nm: float | None = None
-    approved_drugs: list[str] = []
-
-
 class DiseaseAssociation(BaseModel):
     """A disease linked to this target in the literature."""
     disease_name: str
     evidence_level: Literal["validated", "hypothesis", "unknown"] = "unknown"
     source: str
-
-
-class Publication(BaseModel):
-    """A recent publication mentioning this target."""
-    pubmed_id: str
-    title: str
-    year: int
 
 
 class DruggabilityAssessment(BaseModel):
