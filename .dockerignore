@@ -1,0 +1,31 @@
+# Everything in the build context can end up in an image layer, and layers are
+# readable by anyone who has the image. Keep secrets and local state out.
+
+# Secrets
+.env
+.env.*
+*.pem
+
+# Local environments and tooling
+.venv/
+.git/
+.github/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Data produced at runtime (mounted as volumes instead)
+results/
+evals/cache/
+evals/results/
+mlruns/
+mlruns-docker/
+
+# Not needed to run the tool
+scratch/
+tests/
+examples/
+notebooks/
+Dockerfile
+.dockerignore

@@ -31,6 +31,7 @@ also logged to MLflow (see evals/tracking.py) for side-by-side comparison.
 """
 import argparse
 import json
+import os
 import re
 import statistics
 import subprocess
@@ -380,7 +381,12 @@ def build_markdown(run: dict) -> str:
 
 
 def _git_commit() -> str:
-    """Short HEAD hash, -dirty if code, config or the answer key has uncommitted changes."""
+    """
+    Short HEAD hash, -dirty if code, config or the answer key has uncommitted changes.
+
+    Without git (e.g. inside the Docker image, which has no .git), falls back
+    to the GIT_COMMIT environment variable set at build time.
+    """
     def git(*args: str) -> str:
         return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout.strip()
 
@@ -392,7 +398,7 @@ def _git_commit() -> str:
         )
         return f"{commit}-dirty" if dirty else commit
     except (OSError, subprocess.CalledProcessError):
-        return "unknown"
+        return os.environ.get("GIT_COMMIT", "unknown")
 
 
 # ---------------------------------------------------------------------------

@@ -131,3 +131,15 @@ def test_main_runs_every_target_once_per_repeat(monkeypatch, tmp_path):
 def test_repeats_must_be_positive():
     with pytest.raises(SystemExit):
         run_eval.main(["--repeats", "0", "--no-mlflow"])
+
+
+def test_git_commit_falls_back_to_build_arg_without_git(monkeypatch):
+    # Inside the Docker image there is no .git; the commit comes from GIT_COMMIT
+    def no_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+    monkeypatch.setattr(run_eval.subprocess, "run", no_git)
+    monkeypatch.setenv("GIT_COMMIT", "abc1234")
+    assert run_eval._git_commit() == "abc1234"
+
+    monkeypatch.delenv("GIT_COMMIT")
+    assert run_eval._git_commit() == "unknown"

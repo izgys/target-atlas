@@ -237,12 +237,13 @@ uv sync
 
 ### Set API key
 
-```bash
-export ANTHROPIC_API_KEY=your_key_here    # macOS/Linux
-set ANTHROPIC_API_KEY=your_key_here       # Windows
+Create a `.env` file in the project root containing one line (no quotes):
+
+```
+ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Or put `ANTHROPIC_API_KEY=...` in a `.env` file in the project root.
+`.env` is gitignored and excluded from the Docker image. `target-atlas` reads it automatically, and the Docker commands below pass it with `--env-file .env`, so the key never has to be typed in a terminal. An `ANTHROPIC_API_KEY` environment variable also works.
 
 ### Run a target analysis
 
@@ -279,13 +280,44 @@ uv run pytest
 
 The tests mock every API and Claude, so they run offline and need no API key. CI runs them on every push with networking switched off.
 
-### With Docker *(coming in v0.1 release)*
+### With Docker
+
+The image is built with uv from `uv.lock`, runs as a non-root user and contains no secrets: `.env` is excluded from the build context, and the API key is passed when the container starts. Run these from the repository root.
+
+**Build**
 
 ```bash
 docker build -t target-atlas .
-docker run -e ANTHROPIC_API_KEY=your_key -v $(pwd)/results:/app/results target-atlas --target P00533   # macOS/Linux
-docker run -e ANTHROPIC_API_KEY=your_key -v %cd%/results:/app/results target-atlas --target P00533     # Windows
 ```
+
+**Analyse a target.** `--env-file .env` passes the key from your `.env` file to the container when it starts (write it as `ANTHROPIC_API_KEY=sk-ant-...`, without quotes: Docker keeps quotes as part of the value). Reports land in `results/` on your machine.
+
+```bash
+docker run --rm --env-file .env -v "$(pwd)/results:/app/results" target-atlas run EGFR   # macOS/Linux
+docker run --rm --env-file .env -v "%cd%/results:/app/results" target-atlas run EGFR     # Windows (cmd)
+```
+
+If the key is in an environment variable instead, `-e ANTHROPIC_API_KEY` (no value) copies it into the container. Every CLI option works after the image name, e.g. `target-atlas run EGFR --set agents.reasoning.temperature=0`.
+
+**Run the evaluation.** Mount the results folder, the API cache (so retrieval is replayed instead of called live) and an MLflow store for container runs:
+
+```bash
+# macOS/Linux
+docker run --rm --env-file .env \
+  -v "$(pwd)/evals/results:/app/evals/results" \
+  -v "$(pwd)/evals/cache:/app/evals/cache" \
+  -v "$(pwd)/mlruns-docker:/app/mlruns" \
+  target-atlas eval -t EGFR -t TREM2
+
+# Windows (cmd)
+docker run --rm --env-file .env -v "%cd%/evals/results:/app/evals/results" -v "%cd%/evals/cache:/app/evals/cache" -v "%cd%/mlruns-docker:/app/mlruns" target-atlas eval -t EGFR -t TREM2
+```
+
+Notes:
+- **Commit in eval results.** The image has no `.git`, so pass the commit at build time to have it recorded: `docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t target-atlas .` (macOS/Linux, PowerShell), or in cmd: `for /f %i in ('git rev-parse --short HEAD') do docker build --build-arg GIT_COMMIT=%i -t target-atlas .`
+- **Separate MLflow store.** MLflow saves artifact locations as absolute paths, which differ between the container (`/app/mlruns`) and your machine, so container runs use `mlruns-docker/`. Browse their scores with `mlflow ui --backend-store-uri sqlite:///mlruns-docker/mlflow.db`; the artifact files are in `mlruns-docker/artifacts/`.
+- **Linux file ownership.** The container user has UID 1000. If yours differs and the mounted folders are not writable, add `--user "$(id -u):$(id -g)"`.
+- MLflow telemetry is switched off in the image (`MLFLOW_DISABLE_TELEMETRY=true`); override with `-e MLFLOW_DISABLE_TELEMETRY=false`.
 
 ---
 
@@ -296,7 +328,8 @@ target-atlas/
 ├── README.md
 ├── LICENSE
 ├── pyproject.toml
-├── Dockerfile                          # coming v0.1
+├── Dockerfile                          # uv build, non-root, key passed at runtime
+├── .dockerignore                       # keeps .env and local state out of the image
 │
 ├── configs/                            # Hydra config, loaded with the compose API
 │   ├── config.yaml                     # composes the two files below
@@ -348,7 +381,7 @@ target-atlas/
 │
 └── .github/
     └── workflows/
-        └── ci.yml                      # ruff + tests, network off
+        └── ci.yml                      # ruff + tests (network off), Docker build + smoke checks
 ```
 
 ---
@@ -371,7 +404,7 @@ target-atlas/
 - [x] Hydra config system — `configs/`, `--set` overrides
 - [x] MLflow experiment tracking for eval runs
 - [x] Temperature 0 and repeated eval runs (`--repeats`), results reported as mean ± SD
-- [ ] Dockerfile
+- [x] Dockerfile — built with uv, tested in CI
 - [x] Smoke tests + GitHub Actions CI (offline)
 - [x] Three benchmark example outputs (EGFR, TREM2, IL-6R)
 
