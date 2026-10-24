@@ -61,11 +61,11 @@ def _build_report(state: TargetAtlasState) -> str:
 
     # Header
     lines.append(f"# Target Atlas Report — {gene_name} ({uniprot_id})")
-    lines.append(f"")
+    lines.append("")
     lines.append(f"**Generated:** {timestamp}  ")
     lines.append(f"**Organism:** {state.get('organism', 'unknown')}  ")
     lines.append(f"**Run ID:** {state.get('run_id', 'unknown')}  ")
-    lines.append(f"")
+    lines.append("")
     lines.append("---")
     lines.append("")
 

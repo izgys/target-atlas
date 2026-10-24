@@ -1,4 +1,3 @@
-import httpx
 
 from target_atlas.utils.http import http_client
 from pydantic import BaseModel, Field

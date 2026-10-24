@@ -1,4 +1,3 @@
-import httpx
 from functools import lru_cache
 
 from target_atlas.utils.http import http_client
