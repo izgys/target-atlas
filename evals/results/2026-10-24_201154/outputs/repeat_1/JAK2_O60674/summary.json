@@ -1,0 +1,102 @@
+{
+  "target": {
+    "uniprot_id": "O60674",
+    "gene_name": "JAK2",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "214215fd-c877-48c5-b1fb-a80997647a85",
+    "timestamp": "2026-10-24T18:14:07.276120"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "JAK2 is an exceptionally well-validated drug target with 171 PDB structures (best resolution 1.3Å), over 19,000 ChEMBL IC50 entries, and 12 approved drugs including ruxolitinib, baricitinib, and fedratinib. The target has extensive structural, chemical, and clinical validation across multiple disease indications including myeloproliferative neoplasms and inflammatory conditions. Druggability is unambiguously high by all assessed criteria.",
+    "evidence_gaps": [
+      "Selectivity over closely related JAK family members (JAK1, JAK3, TYK2) remains a challenge for next-generation inhibitors, and isoform-selective structural data may be incomplete for some binding modes",
+      "Resistance mechanisms (e.g., JAK2 V617F secondary mutations) and their structural consequences are not fully characterised for all approved drugs",
+      "Allosteric binding sites beyond the ATP-competitive kinase domain are less well explored chemically",
+      "Long-term safety profiles for newer approved agents (e.g., pacritinib, momelotinib) are still accumulating in post-marketing surveillance"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 171,
+    "best_resolution_angstrom": 1.3,
+    "ligand_bound_count": 20,
+    "alphafold_mean_plddt": 86.88,
+    "alphafold_high_confidence_fraction": 0.894,
+    "pdb_ids": [
+      "8BXH",
+      "7LL4",
+      "3UGC",
+      "7REE",
+      "8BA3",
+      "8BX9",
+      "7TEU",
+      "9TM5",
+      "4IVA",
+      "7LL5",
+      "7RN6",
+      "8B8U",
+      "8B9E",
+      "8B9H",
+      "8BA2",
+      "8BM2",
+      "8BX6",
+      "8EX1",
+      "5UT3",
+      "5I4N"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL2971",
+    "total_ic50_entries": 19301,
+    "median_ic50_nm": 111.13,
+    "approved_drug_count": 12,
+    "approved_drugs": [
+      "RUXOLITINIB PHOSPHATE",
+      "MOMELOTINIB",
+      "BARICITINIB",
+      "FEDRATINIB",
+      "PACRITINIB",
+      "FEDRATINIB HYDROCHLORIDE",
+      "PACRITINIB CITRATE",
+      "FILGOTINIB",
+      "FILGOTINIB MALEATE",
+      "UPADACITINIB HEMIHYDRATE",
+      "DEURUXOLITINIB PHOSPHATE",
+      "MOMELOTINIB DIHYDROCHLORIDE MONOHYDRATE"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 3689,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42885301",
+      "42883322",
+      "42878970",
+      "42878945",
+      "42876722",
+      "42874336",
+      "42864290",
+      "42854601",
+      "42842724",
+      "42837801",
+      "42836237",
+      "42823155",
+      "42822143",
+      "42822124",
+      "42808390",
+      "42802799",
+      "42774981",
+      "42764870",
+      "42758515",
+      "42744933"
+    ]
+  },
+  "data_gaps": {}
+}

@@ -1,0 +1,96 @@
+{
+  "target": {
+    "uniprot_id": "P15056",
+    "gene_name": "BRAF",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "362924b1-953a-403d-85ba-9c96e74357f9",
+    "timestamp": "2026-10-24T18:16:38.983560"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "BRAF (P15056) is one of the most well-validated and druggable oncology targets in human medicine, with 5 approved small-molecule inhibitors, over 11,000 ChEMBL IC50 entries, and 138 PDB structures including many at high resolution with bound ligands. The extensive structural, chemical, and clinical evidence places this firmly in the highest druggability tier, with active ongoing research into resistance mechanisms and next-generation inhibitors.",
+    "evidence_gaps": [
+      "AlphaFold mean pLDDT of 66.4 (55% high-confidence fraction) suggests disordered regions outside the kinase domain — structural coverage of full-length BRAF including RAS-binding and regulatory domains may be incomplete in experimental structures",
+      "Resistance mutations (e.g., V600E paradoxical activation, splice variants, BRAF amplification) remain a clinical challenge and are not fully addressed by current approved agents",
+      "Structural data for BRAF in complex with allosteric or type III inhibitors targeting non-ATP-binding sites is limited compared to ATP-competitive inhibitors",
+      "BRAF wild-type vs. mutant selectivity profiles for newer inhibitors are not fully characterised across all relevant oncogenic contexts",
+      "Limited structural data on BRAF in the context of full RAF dimers or higher-order signalling complexes (e.g., with MEK, 14-3-3 proteins)"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 138,
+    "best_resolution_angstrom": 1.5,
+    "ligand_bound_count": 18,
+    "alphafold_mean_plddt": 66.38,
+    "alphafold_high_confidence_fraction": 0.552,
+    "pdb_ids": [
+      "8VSO",
+      "8JNB",
+      "8C7X",
+      "8C7Y",
+      "9EW6",
+      "8JNA",
+      "9BP8",
+      "5VYK",
+      "9BFB",
+      "7K0V",
+      "5ITA",
+      "3NY5",
+      "4XV9",
+      "6XFP",
+      "6N0Q",
+      "9AXX",
+      "5VAM",
+      "5VR3",
+      "6P3D",
+      "5JSM"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL5145",
+    "total_ic50_entries": 11017,
+    "median_ic50_nm": 173.5,
+    "approved_drug_count": 5,
+    "approved_drugs": [
+      "DABRAFENIB MESYLATE",
+      "REGORAFENIB",
+      "SORAFENIB TOSYLATE",
+      "VEMURAFENIB",
+      "ENCORAFENIB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 7320,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42891583",
+      "42886887",
+      "42885245",
+      "42863086",
+      "42853102",
+      "42851340",
+      "42827401",
+      "42826365",
+      "42808388",
+      "42798176",
+      "42794461",
+      "42782943",
+      "42777179",
+      "42771519",
+      "42770398",
+      "42769885",
+      "42750388",
+      "42747511",
+      "42733341",
+      "42723578"
+    ]
+  },
+  "data_gaps": {}
+}

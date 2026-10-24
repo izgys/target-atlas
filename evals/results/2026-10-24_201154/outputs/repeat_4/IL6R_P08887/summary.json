@@ -1,0 +1,84 @@
+{
+  "target": {
+    "uniprot_id": "P08887",
+    "gene_name": "IL6R",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "70254acb-61e2-4620-b509-6e8ed8ad7faf",
+    "timestamp": "2026-10-24T18:26:34.058660"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "medium",
+    "literature_confidence": "high",
+    "summary": "IL6R (P08887) is a well-validated, clinically proven drug target with two approved biologic antagonists (tocilizumab and sarilumab) and multiple high-resolution crystal structures including ligand-bound complexes. The target has strong disease validation across inflammatory and oncological indications, though small-molecule chemical matter is essentially absent from ChEMBL, reflecting the dominance of antibody-based modalities for this extracellular receptor.",
+    "evidence_gaps": [
+      "No small-molecule IC50 data in ChEMBL despite approved drugs existing — chemical tractability for small molecules is undemonstrated",
+      "Best resolution is 2.4Å, just at the threshold; no sub-2Å structures reported, limiting fine-grained structure-based drug design for small molecules",
+      "AlphaFold mean pLDDT of 77.9 with only 67.5% high-confidence residues suggests some disordered regions not well-captured by existing structures",
+      "Approved drugs are exclusively monoclonal antibodies; no approved small molecules or peptide inhibitors targeting IL6R",
+      "Binding site geometry for small-molecule engagement of the IL-6/IL-6R protein-protein interface has not been well characterised in the available data",
+      "No allosteric or intracellular binding site data provided"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 10,
+    "pdb_total_count": 10,
+    "best_resolution_angstrom": 2.4,
+    "ligand_bound_count": 8,
+    "alphafold_mean_plddt": 77.88,
+    "alphafold_high_confidence_fraction": 0.675,
+    "pdb_ids": [
+      "1N26",
+      "5FUC",
+      "7DC8",
+      "8QY5",
+      "8QY6",
+      "8IOW",
+      "8D82",
+      "8J6F",
+      "1P9M",
+      "2ARW"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL2364155",
+    "total_ic50_entries": 0,
+    "median_ic50_nm": null,
+    "approved_drug_count": 2,
+    "approved_drugs": [
+      "TOCILIZUMAB",
+      "SARILUMAB"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 226,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42840991",
+      "42500657",
+      "42316398",
+      "42166383",
+      "41998069",
+      "41972146",
+      "41845003",
+      "41804796",
+      "41697457",
+      "41404646",
+      "41303453",
+      "41274868",
+      "41262879",
+      "41225616",
+      "41124095",
+      "40820933",
+      "40750229",
+      "40683494",
+      "40610814",
+      "40548546"
+    ]
+  },
+  "data_gaps": {}
+}

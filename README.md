@@ -158,6 +158,7 @@ API responses are cached in `evals/cache/`, so reruns are fast and reproducible;
 ```bash
 target-atlas eval                      # all ten targets (run from the repository root)
 target-atlas eval -t EGFR -t TREM2     # a subset
+target-atlas eval --repeats 5          # five full passes, reported as mean ± SD
 ```
 
 Every run is also logged to a local MLflow store in `mlruns/` (gitignored): the full resolved config as parameters, the git commit and model as tags, the four metrics per target and as means, and the run folder as artifacts. To browse runs and compare them side by side:
@@ -168,27 +169,31 @@ mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db   # then open http://12
 
 Pass `--no-mlflow` to skip tracking.
 
-**Results** (`claude-sonnet-4-6`, commit `e642589`):
+**Results** (`claude-sonnet-4-6`, temperature 0, commit `3319341`, five repeats of the full eval; run [`2026-10-24_201154`](evals/results/2026-10-24_201154/results.md)):
 
-| Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty |
-|---|---|---|---|---|---|---|---|
-| EGFR | 1.00 | 0.36 | 0/5 | 4/4 | 0/2 | 1.00 | 1.00 |
-| ERBB2 | 1.00 | 0.75 | 2/3 | 4/4 | 0/1 | 1.00 | 1.00 |
-| BRAF | 1.00 | 0.38 | 0/3 | 3/3 | 0/2 | 1.00 | 1.00 |
-| KRAS | 1.00 | 0.29 | 0/3 | 2/2 | 0/2 | 1.00 | 1.00 |
-| ABL1 | 1.00 | 0.50 | 0/3 | 4/4 | 0/1 | 1.00 | 1.00 |
-| BTK | 1.00 | 0.62 | 2/3 | 3/3 | 0/2 | 1.00 | 1.00 |
-| JAK2 | 1.00 | 0.43 | 0/3 | 3/3 | 0/1 | 1.00 | 1.00 |
-| CD274 | 1.00 | 0.38 | 0/3 | 3/3 | 0/2 | 1.00 | 1.00 |
-| IL6R | 1.00 | 0.80 | 2/2 | 2/2 | 0/1 | 1.00 | 0.67 |
-| TREM2 | 1.00 | 0.60 | 3/3 | — | 0/2 | 1.00 | 1.00 |
-| **Mean** | **1.00** | **0.51** | | | | **1.00** | **0.97** |
+| Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty (mean ± SD) | Verdict stable |
+|---|---|---|---|---|---|---|---|---|
+| EGFR | 1.00 | 0.36 | 0/5 | 4/4 | 0/2 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| ERBB2 | 1.00 | 0.75 | 2/3 | 4/4 | 0/1 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| BRAF | 1.00 | 0.38 | 0/3 | 3/3 | 0/2 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| KRAS | 1.00 | 0.29 | 0/3 | 2/2 | 0/2 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| ABL1 | 1.00 | 0.50 | 0/3 | 4/4 | 0/1 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| BTK | 1.00 | 0.62 | 2/3 | 3/3 | 0/2 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| JAK2 | 1.00 | 0.43 | 0/3 | 3/3 | 0/1 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| CD274 | 1.00 | 0.38 | 0/3 | 3/3 | 0/2 | 1.00 | 1.00 ± 0.00 | 5/5 |
+| IL6R | 1.00 | 0.80 | 2/2 | 2/2 | 0/1 | 1.00 | 0.67 ± 0.00 | **4/5** |
+| TREM2 | 1.00 | 0.60 | 3/3 | — | 0/2 | 1.00 | 0.88 ± 0.11 | **3/5** |
+| **Mean** | **1.00** | **0.51** | | | | **1.00** | **0.95 ± 0.01** | **8/10 stable** |
+
+Identity, fact recall and citation validity depend only on retrieval, which is cached, so they were identical in all five repeats and are shown as single values. Gap honesty depends on Claude's verdicts: per target it is mean ± sample SD over the repeats; in the Mean row the SD is over the five per-repeat means (0.97, 0.95, 0.95, 0.95, 0.97), i.e. how much the headline number moves between full evals. *Verdict stable* counts the repeats that match the most common combination of Claude's four verdicts (druggability and the three confidences).
 
 How to read it:
 - **Approved drugs are recovered in full (28/28)**, and identity resolution is correct for all ten targets.
 - **Low PDB and PMID recall is a retrieval-strategy limit, not a retrieval failure.** The pipeline details the 20 best-resolved structures and the 20 most recent papers; landmark entries fall outside those windows (EGFR's erlotinib complex 1M17 ranks 191 of 393 by resolution). See Known Failure Modes.
 - **Citation validity is currently a plumbing check.** Claude did not write any PDB ID or PMID into its own text in these runs, so every citation came straight from an API. The metric becomes a hallucination check once reports cite IDs in prose.
-- **The one gap-honesty failure is IL6R:** zero ChEMBL IC50 entries, yet chemical confidence was scored `medium`. That is defensible given two approved antibodies, but it falls outside the rubric, which has no notion of biologics.
+- **IL6R fails the same check in every repeat:** zero ChEMBL IC50 entries, yet chemical confidence was scored `medium` all five times. That is defensible given two approved antibodies, but it falls outside the rubric, which has no notion of biologics. A systematic error, not noise.
+- **TREM2 is the borderline case.** Its overall druggability came out `high` in three repeats and `medium` in two; every `high` run fails the sparse-target honesty check (0.80), every `medium` run passes (1.00). The spread of 0.88 ± 0.11 is that one verdict flipping. The single-sample result previously reported here (1.00) was one of the passing draws.
+- **Temperature 0 reduces variation but does not remove it.** It makes the model favour its most likely output, but an API model is still not guaranteed to return identical text for identical input. That is why results are reported over repeats rather than from one run.
 
 ### Confidence scoring
 
@@ -201,7 +206,7 @@ Structural, chemical, and literature confidence are each scored independently on
 - **Retrieval windows miss landmark evidence**: only the 20 best-resolved PDB entries and the 20 most recent PubMed papers are retrieved in detail, so well-known drug-bound structures and foundational papers are usually absent (PDB recall 9/31, PMID recall 0/16 in the evaluation). Total counts are passed to the reasoning node, so coverage is not understated.
 - **Gene-symbol literature search**: PubMed is searched by official gene symbol in the title, which undercounts targets known by another name (CD274: 105 papers, while the field writes "PD-L1").
 - **Rubric overrides**: Claude sometimes overrides the numeric confidence thresholds with prior knowledge, scoring literature confidence `high` for CD274 (105 papers) and IL6R (226) where the rubric says `medium`. That is correct for CD274 given the undercount, but it means confidence is not purely evidence-derived. The same happens when a source fails: in one ADRB2 run where ChEMBL returned a server error, chemical confidence was scored `high` from prior knowledge rather than `none`. Failed retrievals are labelled as failures rather than absences in both the reasoning context and the report, and every API call retries transient errors with backoff, but the scoring rule for failed sources is not yet enforced.
-- **Run-to-run variation in the reasoning step**: API responses are cached, but the Claude call runs at the default temperature, so the same evidence can yield different scores. In one repeat run TREM2 was scored `high` instead of `medium`, failing the sparse-target honesty check. Each reported eval result is a single sample.
+- **Run-to-run variation in the reasoning step**: retrieval is cached and the Claude call runs at temperature 0, yet identical evidence does not always produce identical verdicts — temperature 0 does not make an API model deterministic. Over five repeats of the full eval, 8 of 10 targets gave the same four verdicts every time. TREM2's overall druggability was `high` three times and `medium` twice, failing the sparse-target honesty check whenever it was `high`; IL6R's structural confidence changed once (`medium` ×4, `high` ×1). Borderline targets are where this matters, so reported results are mean ± SD over repeats, never a single sample.
 - **No biologics in the chemical rubric**: chemical confidence is defined on small-molecule IC50 counts, so antibody-only targets (IL6R) fall outside it.
 - **"Ligand-bound" includes ions and glycans**: any non-polymer entity counts as a ligand, which overstates small-molecule structural evidence.
 - **Fragment structures rank as "best"**: PDB entries are ranked by resolution only, with no check of how much of the target they contain. For ADRB2 (outside the eval set), the reported best structure, 1GQ4 at 1.9 Å, is a NHERF PDZ domain bound to a short ADRB2 tail peptide; the best receptor structure is 2RH1 at 2.4 Å. Peptide and fragment complexes can inflate structural confidence and crowd real structures out of the top 20.
@@ -365,6 +370,7 @@ target-atlas/
 - [x] Typer CLI — `target-atlas run` and `target-atlas eval`
 - [x] Hydra config system — `configs/`, `--set` overrides
 - [x] MLflow experiment tracking for eval runs
+- [x] Temperature 0 and repeated eval runs (`--repeats`), results reported as mean ± SD
 - [ ] Dockerfile
 - [x] Smoke tests + GitHub Actions CI (offline)
 - [x] Three benchmark example outputs (EGFR, TREM2, IL-6R)
@@ -380,7 +386,7 @@ target-atlas/
 - [ ] Structure coverage filter — rank PDB entries by target-residue coverage (SIFTS) so peptide and fragment complexes no longer count as best structures
 - [ ] pChEMBL-based chemistry — count IC50, Ki, Kd and EC50 activities on one scale, so non-kinase target classes are not undercounted
 - [ ] Prompt rule for failed sources — score the dimension `none` and state any prior-knowledge expectation separately
-- [ ] Deterministic reasoning (temperature 0) and repeated eval runs reporting mean and spread
+- [ ] Stable verdicts on borderline targets (TREM2): sharper sparse-target thresholds in the rubric, or a majority vote over several reasoning samples
 - [ ] Held-out evaluation set outside the kinase-heavy ten (e.g. ADRB2, ESR1) and UniProt-ID queries
 - [ ] Non-human organism support
 

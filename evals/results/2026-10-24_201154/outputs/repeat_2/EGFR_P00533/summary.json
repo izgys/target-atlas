@@ -1,0 +1,111 @@
+{
+  "target": {
+    "uniprot_id": "P00533",
+    "gene_name": "EGFR",
+    "organism": "Homo sapiens"
+  },
+  "run_metadata": {
+    "run_id": "d9927714-e82c-4135-862d-146cf2aff099",
+    "timestamp": "2026-10-24T18:15:51.125066"
+  },
+  "assessment": {
+    "druggability_score": "high",
+    "structural_confidence": "high",
+    "chemical_confidence": "high",
+    "literature_confidence": "high",
+    "summary": "EGFR (P00533) is one of the most extensively validated and drugged targets in oncology, with 393 PDB structures (best resolution 1.07Å), 26,600 ChEMBL IC50 entries, and 20 approved drugs including small molecules and biologics. The structural, chemical, and literature evidence collectively place this target in the highest possible druggability tier, with well-characterised binding pockets and multiple generations of clinical inhibitors.",
+    "evidence_gaps": [
+      "Median IC50 of 2000 nM across all ChEMBL entries is relatively high, reflecting the breadth of the dataset including weak/non-optimised compounds — potency of approved drugs is far superior but aggregate median may obscure this",
+      "AlphaFold mean pLDDT of 75.9 with only 70.7% high-confidence residues suggests disordered regions (e.g., extracellular domain, flexible loops) not fully captured by crystal structures",
+      "Resistance mechanisms (T790M, C797S, exon 20 insertions) limit clinical utility of existing drugs in certain patient subpopulations — next-generation strategies still under investigation",
+      "Some recent literature hits (e.g., eGFR in diabetes context) reflect non-oncology use of the 'eGFR' acronym, introducing noise into publication counts",
+      "Allosteric and extracellular domain druggability beyond the kinase ATP-binding site is less well characterised structurally"
+    ]
+  },
+  "structural_data": {
+    "pdb_structure_count": 20,
+    "pdb_total_count": 393,
+    "best_resolution_angstrom": 1.07,
+    "ligand_bound_count": 19,
+    "alphafold_mean_plddt": 75.94,
+    "alphafold_high_confidence_fraction": 0.707,
+    "pdb_ids": [
+      "8A27",
+      "8A2D",
+      "5UG9",
+      "5HG8",
+      "8A2A",
+      "5UG8",
+      "3POZ",
+      "6TFV",
+      "6TG0",
+      "3VRP",
+      "5HG5",
+      "5CNO",
+      "9NTP",
+      "5UGC",
+      "3G5Y",
+      "5U8L",
+      "6TG1",
+      "7SI1",
+      "8PO4",
+      "9GL8"
+    ]
+  },
+  "chemical_data": {
+    "chembl_target_id": "CHEMBL203",
+    "total_ic50_entries": 26600,
+    "median_ic50_nm": 2000.0,
+    "approved_drug_count": 20,
+    "approved_drugs": [
+      "PANITUMUMAB",
+      "CETUXIMAB",
+      "ERLOTINIB HYDROCHLORIDE",
+      "GEFITINIB",
+      "LAPATINIB DITOSYLATE",
+      "AFATINIB DIMALEATE",
+      "OSIMERTINIB MESYLATE",
+      "NECITUMUMAB",
+      "OLMUTINIB",
+      "BRIGATINIB",
+      "OSIMERTINIB",
+      "NERATINIB",
+      "DACOMITINIB",
+      "DACOMITINIB ANHYDROUS",
+      "NERATINIB MALEATE",
+      "AMIVANTAMAB",
+      "MOBOCERTINIB",
+      "LAZERTINIB",
+      "MOBOCERTINIB SUCCINATE",
+      "LAZERTINIB MESYLATE"
+    ]
+  },
+  "literature_data": {
+    "recent_publication_count": 20,
+    "publication_total_count": 18783,
+    "most_recent_year": 2026,
+    "pmids": [
+      "42888490",
+      "42888247",
+      "42886048",
+      "42885740",
+      "42885126",
+      "42883206",
+      "42883199",
+      "42883140",
+      "42875450",
+      "42865658",
+      "42864628",
+      "42860444",
+      "42853331",
+      "42848765",
+      "42848171",
+      "42844235",
+      "42839779",
+      "42837955",
+      "42837069",
+      "42835058"
+    ]
+  },
+  "data_gaps": {}
+}

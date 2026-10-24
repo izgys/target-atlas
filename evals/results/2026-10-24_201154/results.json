@@ -1,0 +1,3737 @@
+{
+  "started": "2026-10-24T20:11:54",
+  "git_commit": "3319341",
+  "model": "claude-sonnet-4-6",
+  "overrides": [],
+  "config": {
+    "agents": {
+      "reasoning": {
+        "model": "claude-sonnet-4-6",
+        "temperature": 0,
+        "max_tokens": 2000
+      }
+    },
+    "apis": {
+      "retry": {
+        "retries": 3,
+        "backoff": 2.0
+      },
+      "uniprot": {
+        "base_url": "https://rest.uniprot.org/uniprotkb",
+        "timeout": 10
+      },
+      "pdb": {
+        "search_url": "https://search.rcsb.org/rcsbsearch/v2/query",
+        "entry_url": "https://data.rcsb.org/rest/v1/core/entry",
+        "search_timeout": 15,
+        "entry_timeout": 10,
+        "search_rows": 200,
+        "max_structures": 20
+      },
+      "alphafold": {
+        "base_url": "https://alphafold.ebi.ac.uk/api/prediction",
+        "timeout": 15
+      },
+      "chembl": {
+        "base_url": "https://www.ebi.ac.uk/chembl/api/data",
+        "timeout": 60,
+        "drug_timeout": 15,
+        "activity_page_size": 1000,
+        "max_activities": 2000,
+        "max_mechanisms": 50,
+        "max_molecules": 100
+      },
+      "pubmed": {
+        "base_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
+        "timeout": 15,
+        "abstract_timeout": 20,
+        "max_results": 20,
+        "request_delay": 0.4
+      }
+    }
+  },
+  "cache": "evals/cache",
+  "repeats": 5,
+  "aggregate": {
+    "identity": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "min": 1.0,
+      "max": 1.0,
+      "n": 5
+    },
+    "fact_recall": {
+      "mean": 0.5102922077922077,
+      "sd": 0.0,
+      "min": 0.5102922077922077,
+      "max": 0.5102922077922077,
+      "n": 5
+    },
+    "citation": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "min": 1.0,
+      "max": 1.0,
+      "n": 5
+    },
+    "gap_honesty": {
+      "mean": 0.9546666666666667,
+      "sd": 0.010954451150103331,
+      "min": 0.9466666666666667,
+      "max": 0.9666666666666667,
+      "n": 5
+    }
+  },
+  "targets": [
+    {
+      "query": "EGFR",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.36363636363636365,
+        "sd": 0.0,
+        "min": 0.36363636363636365,
+        "max": 0.36363636363636365,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "ERBB2",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.75,
+        "sd": 0.0,
+        "min": 0.75,
+        "max": 0.75,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "BRAF",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.375,
+        "sd": 0.0,
+        "min": 0.375,
+        "max": 0.375,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "KRAS",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.2857142857142857,
+        "sd": 0.0,
+        "min": 0.2857142857142857,
+        "max": 0.2857142857142857,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "ABL1",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.5,
+        "sd": 0.0,
+        "min": 0.5,
+        "max": 0.5,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "BTK",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.625,
+        "sd": 0.0,
+        "min": 0.625,
+        "max": 0.625,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "JAK2",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.42857142857142855,
+        "sd": 0.0,
+        "min": 0.42857142857142855,
+        "max": 0.42857142857142855,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "CD274",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.375,
+        "sd": 0.0,
+        "min": 0.375,
+        "max": 0.375,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "high": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 5,
+      "levels_stable": true
+    },
+    {
+      "query": "IL6R",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.8,
+        "sd": 0.0,
+        "min": 0.8,
+        "max": 0.8,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 0.6666666666666666,
+        "sd": 0.0,
+        "min": 0.6666666666666666,
+        "max": 0.6666666666666666,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "high": 5
+        },
+        "structural_confidence": {
+          "medium": 4,
+          "high": 1
+        },
+        "chemical_confidence": {
+          "medium": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 4,
+      "levels_stable": false
+    },
+    {
+      "query": "TREM2",
+      "scored": 5,
+      "errors": 0,
+      "identity": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "fact_recall": {
+        "mean": 0.6,
+        "sd": 0.0,
+        "min": 0.6,
+        "max": 0.6,
+        "n": 5
+      },
+      "citation": {
+        "mean": 1.0,
+        "sd": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "n": 5
+      },
+      "gap_honesty": {
+        "mean": 0.88,
+        "sd": 0.1095445115010332,
+        "min": 0.8,
+        "max": 1.0,
+        "n": 5
+      },
+      "levels": {
+        "druggability_score": {
+          "medium": 2,
+          "high": 3
+        },
+        "structural_confidence": {
+          "high": 5
+        },
+        "chemical_confidence": {
+          "low": 5
+        },
+        "literature_confidence": {
+          "high": 5
+        }
+      },
+      "levels_agree": 3,
+      "levels_stable": false
+    }
+  ],
+  "levels_stable_count": 8,
+  "passes": [
+    {
+      "repeat": 1,
+      "targets": [
+        {
+          "query": "EGFR",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00533",
+            "got": "P00533"
+          },
+          "fact_recall": {
+            "score": 0.36363636363636365,
+            "categories": {
+              "pdb_ids": {
+                "expected": 5,
+                "found": 0,
+                "missing": [
+                  "1M17",
+                  "4HJO",
+                  "2ITY",
+                  "4ZAU",
+                  "1IVO"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "15118073",
+                  "15118125"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 25.1
+        },
+        {
+          "query": "ERBB2",
+          "identity": {
+            "score": 1.0,
+            "expected": "P04626",
+            "got": "P04626"
+          },
+          "fact_recall": {
+            "score": 0.75,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "1S78"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3798106"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.8
+        },
+        {
+          "query": "BRAF",
+          "identity": {
+            "score": 1.0,
+            "expected": "P15056",
+            "got": "P15056"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "3OG7",
+                  "1UWH",
+                  "4MNE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "12068308",
+                  "20818844"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 20.2
+        },
+        {
+          "query": "KRAS",
+          "identity": {
+            "score": 1.0,
+            "expected": "P01116",
+            "got": "P01116"
+          },
+          "fact_recall": {
+            "score": 0.2857142857142857,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6OIM",
+                  "6UT0",
+                  "4OBE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "24256730",
+                  "32955176"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 23.2
+        },
+        {
+          "query": "ABL1",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00519",
+            "got": "P00519"
+          },
+          "fact_recall": {
+            "score": 0.5,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "2HYY",
+                  "3CS9",
+                  "2GQG"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "11287972"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.2
+        },
+        {
+          "query": "BTK",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q06187",
+            "got": "Q06187"
+          },
+          "fact_recall": {
+            "score": 0.625,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "3GEN"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "8380905",
+                  "23782158"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 20.6
+        },
+        {
+          "query": "JAK2",
+          "identity": {
+            "score": 1.0,
+            "expected": "O60674",
+            "got": "O60674"
+          },
+          "fact_recall": {
+            "score": 0.42857142857142855,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6VGL",
+                  "3KRR",
+                  "2B7A"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "15793561"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 20.0
+        },
+        {
+          "query": "CD274",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZQ7",
+            "got": "Q9NZQ7"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "4ZQK",
+                  "3BIK",
+                  "5J89"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "10581077",
+                  "11015443"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.6
+        },
+        {
+          "query": "IL6R",
+          "identity": {
+            "score": 1.0,
+            "expected": "P08887",
+            "got": "P08887"
+          },
+          "fact_recall": {
+            "score": 0.8,
+            "categories": {
+              "pdb_ids": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3136546"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 30,
+            "valid": 30,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.6666666666666666,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": false
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "medium",
+            "chemical_confidence": "medium",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 25.4
+        },
+        {
+          "query": "TREM2",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZC2",
+            "got": "Q9NZC2"
+          },
+          "fact_recall": {
+            "score": 0.6,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 0,
+                "found": 0,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "23150908",
+                  "23150934"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 35,
+            "valid": 35,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions absence of approved drugs",
+                "passed": true
+              },
+              {
+                "check": "sparse target not scored high",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "medium",
+            "structural_confidence": "high",
+            "chemical_confidence": "low",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 36.9
+        }
+      ],
+      "aggregate": {
+        "identity": 1.0,
+        "fact_recall": 0.5102922077922077,
+        "citation": 1.0,
+        "gap_honesty": 0.9666666666666667
+      }
+    },
+    {
+      "repeat": 2,
+      "targets": [
+        {
+          "query": "EGFR",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00533",
+            "got": "P00533"
+          },
+          "fact_recall": {
+            "score": 0.36363636363636365,
+            "categories": {
+              "pdb_ids": {
+                "expected": 5,
+                "found": 0,
+                "missing": [
+                  "1M17",
+                  "4HJO",
+                  "2ITY",
+                  "4ZAU",
+                  "1IVO"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "15118073",
+                  "15118125"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 24.5
+        },
+        {
+          "query": "ERBB2",
+          "identity": {
+            "score": 1.0,
+            "expected": "P04626",
+            "got": "P04626"
+          },
+          "fact_recall": {
+            "score": 0.75,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "1S78"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3798106"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 23.4
+        },
+        {
+          "query": "BRAF",
+          "identity": {
+            "score": 1.0,
+            "expected": "P15056",
+            "got": "P15056"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "3OG7",
+                  "1UWH",
+                  "4MNE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "12068308",
+                  "20818844"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.3
+        },
+        {
+          "query": "KRAS",
+          "identity": {
+            "score": 1.0,
+            "expected": "P01116",
+            "got": "P01116"
+          },
+          "fact_recall": {
+            "score": 0.2857142857142857,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6OIM",
+                  "6UT0",
+                  "4OBE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "24256730",
+                  "32955176"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 26.0
+        },
+        {
+          "query": "ABL1",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00519",
+            "got": "P00519"
+          },
+          "fact_recall": {
+            "score": 0.5,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "2HYY",
+                  "3CS9",
+                  "2GQG"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "11287972"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 23.2
+        },
+        {
+          "query": "BTK",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q06187",
+            "got": "Q06187"
+          },
+          "fact_recall": {
+            "score": 0.625,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "3GEN"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "8380905",
+                  "23782158"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.1
+        },
+        {
+          "query": "JAK2",
+          "identity": {
+            "score": 1.0,
+            "expected": "O60674",
+            "got": "O60674"
+          },
+          "fact_recall": {
+            "score": 0.42857142857142855,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6VGL",
+                  "3KRR",
+                  "2B7A"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "15793561"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 19.4
+        },
+        {
+          "query": "CD274",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZQ7",
+            "got": "Q9NZQ7"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "4ZQK",
+                  "3BIK",
+                  "5J89"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "10581077",
+                  "11015443"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 20.7
+        },
+        {
+          "query": "IL6R",
+          "identity": {
+            "score": 1.0,
+            "expected": "P08887",
+            "got": "P08887"
+          },
+          "fact_recall": {
+            "score": 0.8,
+            "categories": {
+              "pdb_ids": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3136546"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 30,
+            "valid": 30,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.6666666666666666,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": false
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "medium",
+            "chemical_confidence": "medium",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 24.9
+        },
+        {
+          "query": "TREM2",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZC2",
+            "got": "Q9NZC2"
+          },
+          "fact_recall": {
+            "score": 0.6,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 0,
+                "found": 0,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "23150908",
+                  "23150934"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 35,
+            "valid": 35,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.8,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions absence of approved drugs",
+                "passed": true
+              },
+              {
+                "check": "sparse target not scored high",
+                "passed": false
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "low",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 30.7
+        }
+      ],
+      "aggregate": {
+        "identity": 1.0,
+        "fact_recall": 0.5102922077922077,
+        "citation": 1.0,
+        "gap_honesty": 0.9466666666666667
+      }
+    },
+    {
+      "repeat": 3,
+      "targets": [
+        {
+          "query": "EGFR",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00533",
+            "got": "P00533"
+          },
+          "fact_recall": {
+            "score": 0.36363636363636365,
+            "categories": {
+              "pdb_ids": {
+                "expected": 5,
+                "found": 0,
+                "missing": [
+                  "1M17",
+                  "4HJO",
+                  "2ITY",
+                  "4ZAU",
+                  "1IVO"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "15118073",
+                  "15118125"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 23.8
+        },
+        {
+          "query": "ERBB2",
+          "identity": {
+            "score": 1.0,
+            "expected": "P04626",
+            "got": "P04626"
+          },
+          "fact_recall": {
+            "score": 0.75,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "1S78"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3798106"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 24.2
+        },
+        {
+          "query": "BRAF",
+          "identity": {
+            "score": 1.0,
+            "expected": "P15056",
+            "got": "P15056"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "3OG7",
+                  "1UWH",
+                  "4MNE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "12068308",
+                  "20818844"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 20.2
+        },
+        {
+          "query": "KRAS",
+          "identity": {
+            "score": 1.0,
+            "expected": "P01116",
+            "got": "P01116"
+          },
+          "fact_recall": {
+            "score": 0.2857142857142857,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6OIM",
+                  "6UT0",
+                  "4OBE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "24256730",
+                  "32955176"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 24.1
+        },
+        {
+          "query": "ABL1",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00519",
+            "got": "P00519"
+          },
+          "fact_recall": {
+            "score": 0.5,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "2HYY",
+                  "3CS9",
+                  "2GQG"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "11287972"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 20.8
+        },
+        {
+          "query": "BTK",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q06187",
+            "got": "Q06187"
+          },
+          "fact_recall": {
+            "score": 0.625,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "3GEN"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "8380905",
+                  "23782158"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 19.8
+        },
+        {
+          "query": "JAK2",
+          "identity": {
+            "score": 1.0,
+            "expected": "O60674",
+            "got": "O60674"
+          },
+          "fact_recall": {
+            "score": 0.42857142857142855,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6VGL",
+                  "3KRR",
+                  "2B7A"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "15793561"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 19.9
+        },
+        {
+          "query": "CD274",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZQ7",
+            "got": "Q9NZQ7"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "4ZQK",
+                  "3BIK",
+                  "5J89"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "10581077",
+                  "11015443"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.3
+        },
+        {
+          "query": "IL6R",
+          "identity": {
+            "score": 1.0,
+            "expected": "P08887",
+            "got": "P08887"
+          },
+          "fact_recall": {
+            "score": 0.8,
+            "categories": {
+              "pdb_ids": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3136546"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 30,
+            "valid": 30,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.6666666666666666,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": false
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "medium",
+            "chemical_confidence": "medium",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 24.5
+        },
+        {
+          "query": "TREM2",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZC2",
+            "got": "Q9NZC2"
+          },
+          "fact_recall": {
+            "score": 0.6,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 0,
+                "found": 0,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "23150908",
+                  "23150934"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 35,
+            "valid": 35,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.8,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions absence of approved drugs",
+                "passed": true
+              },
+              {
+                "check": "sparse target not scored high",
+                "passed": false
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "low",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 34.9
+        }
+      ],
+      "aggregate": {
+        "identity": 1.0,
+        "fact_recall": 0.5102922077922077,
+        "citation": 1.0,
+        "gap_honesty": 0.9466666666666667
+      }
+    },
+    {
+      "repeat": 4,
+      "targets": [
+        {
+          "query": "EGFR",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00533",
+            "got": "P00533"
+          },
+          "fact_recall": {
+            "score": 0.36363636363636365,
+            "categories": {
+              "pdb_ids": {
+                "expected": 5,
+                "found": 0,
+                "missing": [
+                  "1M17",
+                  "4HJO",
+                  "2ITY",
+                  "4ZAU",
+                  "1IVO"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "15118073",
+                  "15118125"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 23.2
+        },
+        {
+          "query": "ERBB2",
+          "identity": {
+            "score": 1.0,
+            "expected": "P04626",
+            "got": "P04626"
+          },
+          "fact_recall": {
+            "score": 0.75,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "1S78"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3798106"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.7
+        },
+        {
+          "query": "BRAF",
+          "identity": {
+            "score": 1.0,
+            "expected": "P15056",
+            "got": "P15056"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "3OG7",
+                  "1UWH",
+                  "4MNE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "12068308",
+                  "20818844"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 19.9
+        },
+        {
+          "query": "KRAS",
+          "identity": {
+            "score": 1.0,
+            "expected": "P01116",
+            "got": "P01116"
+          },
+          "fact_recall": {
+            "score": 0.2857142857142857,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6OIM",
+                  "6UT0",
+                  "4OBE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "24256730",
+                  "32955176"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 25.4
+        },
+        {
+          "query": "ABL1",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00519",
+            "got": "P00519"
+          },
+          "fact_recall": {
+            "score": 0.5,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "2HYY",
+                  "3CS9",
+                  "2GQG"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "11287972"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.4
+        },
+        {
+          "query": "BTK",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q06187",
+            "got": "Q06187"
+          },
+          "fact_recall": {
+            "score": 0.625,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "3GEN"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "8380905",
+                  "23782158"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 19.6
+        },
+        {
+          "query": "JAK2",
+          "identity": {
+            "score": 1.0,
+            "expected": "O60674",
+            "got": "O60674"
+          },
+          "fact_recall": {
+            "score": 0.42857142857142855,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6VGL",
+                  "3KRR",
+                  "2B7A"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "15793561"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 18.5
+        },
+        {
+          "query": "CD274",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZQ7",
+            "got": "Q9NZQ7"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "4ZQK",
+                  "3BIK",
+                  "5J89"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "10581077",
+                  "11015443"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.6
+        },
+        {
+          "query": "IL6R",
+          "identity": {
+            "score": 1.0,
+            "expected": "P08887",
+            "got": "P08887"
+          },
+          "fact_recall": {
+            "score": 0.8,
+            "categories": {
+              "pdb_ids": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3136546"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 30,
+            "valid": 30,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.6666666666666666,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": false
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "medium",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.6
+        },
+        {
+          "query": "TREM2",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZC2",
+            "got": "Q9NZC2"
+          },
+          "fact_recall": {
+            "score": 0.6,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 0,
+                "found": 0,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "23150908",
+                  "23150934"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 35,
+            "valid": 35,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.8,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions absence of approved drugs",
+                "passed": true
+              },
+              {
+                "check": "sparse target not scored high",
+                "passed": false
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "low",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 34.1
+        }
+      ],
+      "aggregate": {
+        "identity": 1.0,
+        "fact_recall": 0.5102922077922077,
+        "citation": 1.0,
+        "gap_honesty": 0.9466666666666667
+      }
+    },
+    {
+      "repeat": 5,
+      "targets": [
+        {
+          "query": "EGFR",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00533",
+            "got": "P00533"
+          },
+          "fact_recall": {
+            "score": 0.36363636363636365,
+            "categories": {
+              "pdb_ids": {
+                "expected": 5,
+                "found": 0,
+                "missing": [
+                  "1M17",
+                  "4HJO",
+                  "2ITY",
+                  "4ZAU",
+                  "1IVO"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "15118073",
+                  "15118125"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.0
+        },
+        {
+          "query": "ERBB2",
+          "identity": {
+            "score": 1.0,
+            "expected": "P04626",
+            "got": "P04626"
+          },
+          "fact_recall": {
+            "score": 0.75,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "1S78"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3798106"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.2
+        },
+        {
+          "query": "BRAF",
+          "identity": {
+            "score": 1.0,
+            "expected": "P15056",
+            "got": "P15056"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "3OG7",
+                  "1UWH",
+                  "4MNE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "12068308",
+                  "20818844"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 21.4
+        },
+        {
+          "query": "KRAS",
+          "identity": {
+            "score": 1.0,
+            "expected": "P01116",
+            "got": "P01116"
+          },
+          "fact_recall": {
+            "score": 0.2857142857142857,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6OIM",
+                  "6UT0",
+                  "4OBE"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "24256730",
+                  "32955176"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 25.3
+        },
+        {
+          "query": "ABL1",
+          "identity": {
+            "score": 1.0,
+            "expected": "P00519",
+            "got": "P00519"
+          },
+          "fact_recall": {
+            "score": 0.5,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "2HYY",
+                  "3CS9",
+                  "2GQG"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 4,
+                "found": 4,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "11287972"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.0
+        },
+        {
+          "query": "BTK",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q06187",
+            "got": "Q06187"
+          },
+          "fact_recall": {
+            "score": 0.625,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 2,
+                "missing": [
+                  "3GEN"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "8380905",
+                  "23782158"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.3
+        },
+        {
+          "query": "JAK2",
+          "identity": {
+            "score": 1.0,
+            "expected": "O60674",
+            "got": "O60674"
+          },
+          "fact_recall": {
+            "score": 0.42857142857142855,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "6VGL",
+                  "3KRR",
+                  "2B7A"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "15793561"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 19.6
+        },
+        {
+          "query": "CD274",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZQ7",
+            "got": "Q9NZQ7"
+          },
+          "fact_recall": {
+            "score": 0.375,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 0,
+                "missing": [
+                  "4ZQK",
+                  "3BIK",
+                  "5J89"
+                ]
+              },
+              "approved_drugs": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "10581077",
+                  "11015443"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 40,
+            "valid": 40,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "high",
+            "chemical_confidence": "high",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 22.8
+        },
+        {
+          "query": "IL6R",
+          "identity": {
+            "score": 1.0,
+            "expected": "P08887",
+            "got": "P08887"
+          },
+          "fact_recall": {
+            "score": 0.8,
+            "categories": {
+              "pdb_ids": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 2,
+                "found": 2,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 1,
+                "found": 0,
+                "missing": [
+                  "3136546"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 30,
+            "valid": 30,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 0.6666666666666666,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": false
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "high",
+            "structural_confidence": "medium",
+            "chemical_confidence": "medium",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 23.7
+        },
+        {
+          "query": "TREM2",
+          "identity": {
+            "score": 1.0,
+            "expected": "Q9NZC2",
+            "got": "Q9NZC2"
+          },
+          "fact_recall": {
+            "score": 0.6,
+            "categories": {
+              "pdb_ids": {
+                "expected": 3,
+                "found": 3,
+                "missing": []
+              },
+              "approved_drugs": {
+                "expected": 0,
+                "found": 0,
+                "missing": []
+              },
+              "pmids": {
+                "expected": 2,
+                "found": 0,
+                "missing": [
+                  "23150908",
+                  "23150934"
+                ]
+              }
+            }
+          },
+          "citation": {
+            "score": 1.0,
+            "cited": 35,
+            "valid": 35,
+            "llm_cited_pdb_ids": [],
+            "llm_cited_pmids": [],
+            "invalid_pdb_ids": [],
+            "invalid_pmids": []
+          },
+          "gap_honesty": {
+            "score": 1.0,
+            "checks": [
+              {
+                "check": "evidence gaps listed",
+                "passed": true
+              },
+              {
+                "check": "chemical confidence low/none without ChEMBL bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions missing bioactivity",
+                "passed": true
+              },
+              {
+                "check": "gap mentions absence of approved drugs",
+                "passed": true
+              },
+              {
+                "check": "sparse target not scored high",
+                "passed": true
+              }
+            ]
+          },
+          "levels": {
+            "druggability_score": "medium",
+            "structural_confidence": "high",
+            "chemical_confidence": "low",
+            "literature_confidence": "high"
+          },
+          "pipeline_errors": {},
+          "seconds": 35.8
+        }
+      ],
+      "aggregate": {
+        "identity": 1.0,
+        "fact_recall": 0.5102922077922077,
+        "citation": 1.0,
+        "gap_honesty": 0.9666666666666667
+      }
+    }
+  ]
+}
