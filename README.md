@@ -32,6 +32,8 @@ Report: results/TREM2_Q9NZC2/report.md
 Summary: results/TREM2_Q9NZC2/summary.json
 ```
 
+TREM2 is a deliberately hard case: excellent structures, no chemistry. Its overall verdict switches between `medium` and `high` across repeated runs (see [How well does it work?](#how-well-does-it-work)).
+
 ## Why
 
 Choosing a drug target is one of the most expensive decisions in drug discovery, and the evidence behind it is still mostly pulled together by hand: structures from one database, chemistry from another, papers from a third. That works for a famous target like EGFR. It gets slow for a new target, or for twenty candidates at once.
