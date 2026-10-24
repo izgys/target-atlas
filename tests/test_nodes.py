@@ -16,6 +16,7 @@ import target_atlas.agents.literature_agent as lit
 import target_atlas.agents.reasoning_agent as rea
 import target_atlas.agents.report_generator as rep
 import target_atlas.agents.structure_agent as st
+from target_atlas.config import get_config
 
 
 def _raise(message):
@@ -160,7 +161,7 @@ def test_reasoning_agent_parses_claude_json(full_state, fake_claude):
 
     # Exactly one Claude call, with the configured model
     assert len(fake_claude.calls) == 1
-    assert fake_claude.calls[0]["model"] == rea.MODEL
+    assert fake_claude.calls[0]["model"] == get_config().agents.reasoning.model
 
 
 def test_reasoning_agent_tells_claude_the_totals_not_the_window(full_state, fake_claude):

@@ -1,9 +1,7 @@
-
-from target_atlas.utils.http import http_client
 from pydantic import BaseModel, Field
 
-
-ALPHAFOLD_API = "https://alphafold.ebi.ac.uk/api/prediction"
+from target_atlas.config import get_config
+from target_atlas.utils.http import http_client
 
 
 class AlphaFoldResult(BaseModel):
@@ -15,8 +13,9 @@ class AlphaFoldResult(BaseModel):
 
 
 def fetch_alphafold(uniprot_id: str) -> AlphaFoldResult | None:
-    with http_client(timeout=15.0) as client:
-        response = client.get(f"{ALPHAFOLD_API}/{uniprot_id}")
+    cfg = get_config().apis.alphafold
+    with http_client(timeout=cfg.timeout) as client:
+        response = client.get(f"{cfg.base_url}/{uniprot_id}")
 
         # 404 — valid ID format but not in AlphaFold DB
         # 400 — invalid ID format entirely

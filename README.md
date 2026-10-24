@@ -245,6 +245,27 @@ Outputs are written to `results/<gene>_<uniprot_id>/`:
 - `report.md` — structured druggability assessment
 - `summary.json` — machine-readable summary
 
+### Change settings
+
+Model, temperature, timeouts, retries and retrieval windows live in `configs/agents.yaml` and `configs/apis.yaml`. Edit the files, or override any value for one run with `--set` (repeatable):
+
+```bash
+target-atlas run EGFR --set agents.reasoning.temperature=0
+target-atlas run EGFR --set apis.pdb.max_structures=50 --set apis.pubmed.max_results=50
+target-atlas eval --set agents.reasoning.max_tokens=4000
+```
+
+A misspelt key is rejected rather than silently ignored. Every eval run saves the resolved config and its overrides in `results.json`.
+
+### Run the tests
+
+```bash
+uv run ruff check .
+uv run pytest
+```
+
+The tests mock every API and Claude, so they run offline and need no API key. CI runs them on every push with networking switched off.
+
 ### With Docker *(coming in v0.1 release)*
 
 ```bash
@@ -264,15 +285,17 @@ target-atlas/
 ├── pyproject.toml
 ├── Dockerfile                          # coming v0.1
 │
-├── configs/                            # coming v0.1 (Hydra)
+├── configs/                            # Hydra config, loaded with the compose API
+│   ├── config.yaml                     # composes the two files below
 │   ├── agents.yaml                     # model, temperature, max_tokens
-│   └── apis.yaml                       # endpoints, timeouts, rate limits
+│   └── apis.yaml                       # endpoints, timeouts, retries, retrieval windows
 │
 ├── src/
 │   └── target_atlas/
 │       ├── state.py                    # TargetAtlasState TypedDict + Pydantic models
 │       ├── graph.py                    # LangGraph graph definition
 │       ├── cli.py                      # Typer CLI: run, eval
+│       ├── config.py                   # load_config() / get_config()
 │       ├── agents/
 │       │   ├── input_parser.py
 │       │   ├── structure_agent.py
@@ -298,17 +321,20 @@ target-atlas/
 │   ├── trem2_Q9NZC2/
 │   └── il6r_P08887/
 │
-├── tests/                              # coming v0.1
+├── tests/                              # offline: APIs and Claude mocked
+│   ├── conftest.py                     # network guard, fake evidence, fake Claude
 │   ├── test_state.py
-│   ├── test_structure_agent.py
-│   └── test_graph.py
+│   ├── test_nodes.py
+│   ├── test_graph.py
+│   ├── test_http.py
+│   └── test_config.py
 │
 ├── notebooks/
 │   └── 01_system_walkthrough.ipynb    # coming v0.1
 │
 └── .github/
     └── workflows/
-        └── ci.yml                      # lint + smoke tests (coming v0.1)
+        └── ci.yml                      # ruff + tests, network off
 ```
 
 ---
@@ -328,10 +354,10 @@ target-atlas/
 - [x] LangGraph graph — all five nodes wired
 - [x] Evaluation harness — 10 targets, four deterministic metrics, cached APIs
 - [x] Typer CLI — `target-atlas run` and `target-atlas eval`
-- [ ] Hydra config system
+- [x] Hydra config system — `configs/`, `--set` overrides
 - [ ] MLflow experiment tracking
 - [ ] Dockerfile
-- [ ] Smoke tests + GitHub Actions CI
+- [x] Smoke tests + GitHub Actions CI (offline)
 - [x] Three benchmark example outputs (EGFR, TREM2, IL-6R)
 
 **v0.2 (planned)**

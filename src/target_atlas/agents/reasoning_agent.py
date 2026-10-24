@@ -1,13 +1,14 @@
 import json
-import anthropic
 
-from target_atlas.state import TargetAtlasState, DruggabilityAssessment, retrieval_failed
+import anthropic
 from dotenv import load_dotenv
+
+from target_atlas.config import get_config
+from target_atlas.state import DruggabilityAssessment, TargetAtlasState, retrieval_failed
+
 load_dotenv()
 
-# Model to use for reasoning — claude-sonnet is the right balance
-# of capability and cost for this synthesis task
-MODEL = "claude-sonnet-4-6"
+# Model, temperature and max_tokens live in configs/agents.yaml (agents.reasoning).
 
 
 def reasoning_agent(state: TargetAtlasState) -> dict:
@@ -42,16 +43,20 @@ def reasoning_agent(state: TargetAtlasState) -> dict:
     # Build structured context from state
     context = _build_context(state)
 
+    cfg = get_config().agents.reasoning
+    request = {
+        "model": cfg.model,
+        "max_tokens": cfg.max_tokens,
+        "system": _system_prompt(),
+        "messages": [{"role": "user", "content": context}],
+    }
+    # null in the config means "use the API default": leave the parameter out
+    if cfg.temperature is not None:
+        request["temperature"] = cfg.temperature
+
     try:
         client = anthropic.Anthropic()
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=2000,
-            system=_system_prompt(),
-            messages=[
-                {"role": "user", "content": context}
-            ]
-        )
+        response = client.messages.create(**request)
 
         raw_text = response.content[0].text
         assessment = _parse_assessment(raw_text)

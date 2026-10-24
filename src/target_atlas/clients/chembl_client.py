@@ -1,12 +1,10 @@
-import httpx
-
-from target_atlas.utils.http import http_client
-from pydantic import BaseModel
 import statistics
 from functools import lru_cache
 
+from pydantic import BaseModel
 
-CHEMBL_API = "https://www.ebi.ac.uk/chembl/api/data"
+from target_atlas.config import get_config
+from target_atlas.utils.http import http_client
 
 
 class Inhibitor(BaseModel):
@@ -70,9 +68,10 @@ def _resolve_chembl_target_id(uniprot_id: str) -> str | None:
     Transient server failures are retried by the shared HTTP client;
     the result is memoised because bioactivity and drug fetches both need it.
     """
-    with http_client(timeout=60.0) as client:
+    cfg = get_config().apis.chembl
+    with http_client(timeout=cfg.timeout) as client:
         response = client.get(
-            f"{CHEMBL_API}/target",
+            f"{cfg.base_url}/target",
             params={
                 "target_components__accession": uniprot_id,
                 # An accession also appears in protein families, complexes
@@ -92,16 +91,23 @@ def _resolve_chembl_target_id(uniprot_id: str) -> str | None:
 
 
 def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
+    """
+    Total IC50 count for the target, plus the median of a sample of values.
+
+    total_entries comes from page_meta (all entries). The median is computed
+    from at most apis.chembl.max_activities values — the first pages only.
+    """
+    cfg = get_config().apis.chembl
     ic50_values = []
     offset = 0
-    limit = 1000
+    limit = cfg.activity_page_size
     total = None
 
     while True:
         # New client per request — avoids session timeout on long loops
-        with http_client(timeout=60.0) as client:
+        with http_client(timeout=cfg.timeout) as client:
             response = client.get(
-                f"{CHEMBL_API}/activity",
+                f"{cfg.base_url}/activity",
                 params={
                     "target_chembl_id": chembl_target_id,
                     "standard_type": "IC50",
@@ -131,7 +137,7 @@ def _fetch_bioactivity_summary(chembl_target_id: str) -> BioactivitySummary:
                     pass
 
         offset += limit
-        if offset >= min(total, 2000):
+        if offset >= min(total, cfg.max_activities):
             break
 
     median_ic50 = statistics.median(ic50_values) if ic50_values else None
@@ -148,16 +154,17 @@ def _fetch_drug_mechanisms(chembl_target_id: str) -> list[Inhibitor]:
     Filters at query level — only returns Phase 4 approved drugs.
     Names are fetched separately from the molecule endpoint.
     """
-    with http_client(timeout=15.0) as client:
+    cfg = get_config().apis.chembl
+    with http_client(timeout=cfg.drug_timeout) as client:
 
         # Step 1 — get approved mechanisms only (max_phase=4 at query level)
         response = client.get(
-            f"{CHEMBL_API}/mechanism",
+            f"{cfg.base_url}/mechanism",
             params={
                 "target_chembl_id": chembl_target_id,
                 "max_phase": 4,
                 "format": "json",
-                "limit": 50,
+                "limit": cfg.max_mechanisms,
             },
             follow_redirects=True,
         )
@@ -177,11 +184,11 @@ def _fetch_drug_mechanisms(chembl_target_id: str) -> list[Inhibitor]:
         # Step 3 — fetch preferred names from molecule endpoint
         ids_str = ",".join(molecule_mechanisms.keys())
         response = client.get(
-            f"{CHEMBL_API}/molecule",
+            f"{cfg.base_url}/molecule",
             params={
                 "molecule_chembl_id__in": ids_str,
                 "format": "json",
-                "limit": 100,
+                "limit": cfg.max_molecules,
             },
             follow_redirects=True,
         )
@@ -204,38 +211,3 @@ def _fetch_drug_mechanisms(chembl_target_id: str) -> list[Inhibitor]:
         ))
 
     return drugs
-
-def _fetch_approved_molecule_names(
-    chembl_ids: list[str],
-    client: httpx.Client
-) -> dict[str, str]:
-    """
-    Fetch preferred names for a list of ChEMBL molecule IDs.
-    Filters to approved drugs only (max_phase=4).
-
-    Returns:
-        dict mapping chembl_id -> preferred_name for approved drugs only
-    """
-    # ChEMBL supports filtering by multiple IDs using the __in operator
-    ids_str = ";".join(chembl_ids)
-
-    response = client.get(
-        f"{CHEMBL_API}/molecule",
-        params={
-            "molecule_chembl_id__in": ids_str,
-            "max_phase": 4,
-            "format": "json",
-            "limit": 100,
-        },
-        follow_redirects=True,
-    )
-    response.raise_for_status()
-    data = response.json()
-
-    molecules = data.get("molecules", [])
-    return {
-        m["molecule_chembl_id"]: (
-            m.get("pref_name") or m["molecule_chembl_id"]
-        )
-        for m in molecules
-    }

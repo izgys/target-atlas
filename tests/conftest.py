@@ -17,6 +17,7 @@ from types import SimpleNamespace
 
 import pytest
 
+import target_atlas.config as config
 from target_atlas.clients.alphafold_client import AlphaFoldResult
 from target_atlas.clients.chembl_client import BioactivitySummary, Inhibitor
 from target_atlas.clients.pdb_client import PDBStructure
@@ -53,6 +54,14 @@ def no_network(monkeypatch):
 @pytest.fixture(autouse=True)
 def no_api_key(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+
+
+@pytest.fixture(autouse=True)
+def default_config(monkeypatch):
+    # The active config is module-level state. Reset it so a test that loads
+    # overrides cannot leak them into the next test; get_config() then
+    # recomposes the defaults from configs/.
+    monkeypatch.setattr(config, "_config", None)
 
 
 # ---------------------------------------------------------------------------

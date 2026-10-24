@@ -1,0 +1,10 @@
+# @package agents
+#
+# LLM settings. Only the reasoning node calls a model.
+
+reasoning:
+  model: claude-sonnet-4-6
+  # 1.0 is the Anthropic API default, so this reproduces the behaviour before
+  # config existed. null omits the parameter entirely.
+  temperature: 1.0
+  max_tokens: 2000

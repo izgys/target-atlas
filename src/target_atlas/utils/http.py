@@ -40,8 +40,14 @@ def disable_cache() -> None:
 
 
 def http_client(timeout: float, **kwargs) -> httpx.Client:
-    """Return an httpx.Client with retries, cached if enable_cache() is active."""
-    transport: httpx.BaseTransport = RetryTransport()
+    """
+    Return an httpx.Client with retries, cached if enable_cache() is active.
+    Retry count and backoff come from apis.retry in configs/apis.yaml.
+    """
+    from target_atlas.config import get_config   # deferred: keeps this module importable alone
+
+    retry = get_config().apis.retry
+    transport: httpx.BaseTransport = RetryTransport(retries=retry.retries, backoff=retry.backoff)
     if _cache_dir is not None:
         transport = CachingTransport(_cache_dir, inner=transport)
     return httpx.Client(timeout=timeout, transport=transport, **kwargs)

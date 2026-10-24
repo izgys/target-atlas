@@ -1,0 +1,41 @@
+# @package apis
+#
+# Endpoints, timeouts (seconds), retries and retrieval windows for the five
+# data sources. The retrieval windows decide what evidence Claude sees, so a
+# change here changes eval results: rerun the eval after editing them.
+
+retry:                    # shared by every client (target_atlas.utils.http)
+  retries: 3              # extra attempts after the first, for 5xx / 429 / timeouts
+  backoff: 2.0            # wait 2, 4, 8 s between attempts
+
+uniprot:
+  base_url: https://rest.uniprot.org/uniprotkb
+  timeout: 10
+
+pdb:
+  search_url: https://search.rcsb.org/rcsbsearch/v2/query
+  entry_url: https://data.rcsb.org/rest/v1/core/entry
+  search_timeout: 15
+  entry_timeout: 10
+  search_rows: 200        # IDs returned by the search, sorted by resolution
+  max_structures: 20      # retrieval window: best-resolved entries fetched in detail
+
+alphafold:
+  base_url: https://alphafold.ebi.ac.uk/api/prediction
+  timeout: 15
+
+chembl:
+  base_url: https://www.ebi.ac.uk/chembl/api/data
+  timeout: 60             # target lookup and activity pages (slow, paginated)
+  drug_timeout: 15        # mechanism and molecule lookups
+  activity_page_size: 1000
+  max_activities: 2000    # IC50 values fetched for the median: a sample, not all entries
+  max_mechanisms: 50
+  max_molecules: 100
+
+pubmed:
+  base_url: https://eutils.ncbi.nlm.nih.gov/entrez/eutils
+  timeout: 15
+  abstract_timeout: 20
+  max_results: 20         # retrieval window: most recent title matches
+  request_delay: 0.4      # seconds between calls; NCBI allows 3/s without an API key

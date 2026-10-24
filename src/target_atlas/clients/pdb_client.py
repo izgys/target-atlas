@@ -1,11 +1,9 @@
 from functools import lru_cache
 
-from target_atlas.utils.http import http_client
 from pydantic import BaseModel
 
-
-RCSB_SEARCH_API = "https://search.rcsb.org/rcsbsearch/v2/query"
-RCSB_DATA_API = "https://data.rcsb.org/rest/v1/core/entry"
+from target_atlas.config import get_config
+from target_atlas.utils.http import http_client
 
 
 class PDBStructure(BaseModel):
@@ -17,7 +15,7 @@ class PDBStructure(BaseModel):
     chain_count: int = 1                # number of protein chains in the assembly
 
 
-def fetch_structures(uniprot_id: str, max_structures: int = 20) -> list[PDBStructure]:
+def fetch_structures(uniprot_id: str, max_structures: int | None = None) -> list[PDBStructure]:
     """
     Fetch experimental PDB structures for a given UniProt ID.
 
@@ -28,11 +26,15 @@ def fetch_structures(uniprot_id: str, max_structures: int = 20) -> list[PDBStruc
     Args:
         uniprot_id: canonical UniProt accession e.g. 'P00533'
         max_structures: maximum number of structures to return
+                        (default: apis.pdb.max_structures in configs/apis.yaml)
 
     Returns:
         list of PDBStructure sorted by resolution ascending (best first)
         empty list if no structures found or API unavailable
     """
+    if max_structures is None:
+        max_structures = get_config().apis.pdb.max_structures
+
     pdb_ids, _ = _search_pdb_ids(uniprot_id)
 
     if not pdb_ids:
@@ -75,8 +77,12 @@ def _search_pdb_ids(uniprot_id: str) -> tuple[list[str], int]:
     the UniProt cross-reference field specifically.
 
     Returns:
-        (PDB IDs, total match count) — up to 200 IDs, ([], 0) if none found
+        (PDB IDs, total match count) — up to apis.pdb.search_rows IDs, ([], 0) if none
+
+    Memoised per accession for the life of the process, so a config change
+    made after the first call does not affect search_rows until a restart.
     """
+    cfg = get_config().apis.pdb
     # RCSB uses a JSON query language for structured searches
     # We search the polymer entity uniprot accession field specifically
     query = {
@@ -93,7 +99,7 @@ def _search_pdb_ids(uniprot_id: str) -> tuple[list[str], int]:
         "request_options": {
             "paginate": {
                 "start": 0,
-                "rows": 200      # fetch up to 200 IDs, we'll filter later
+                "rows": cfg.search_rows      # IDs to rank; the best few are detailed
             },
             "sort": [
                 {
@@ -104,8 +110,8 @@ def _search_pdb_ids(uniprot_id: str) -> tuple[list[str], int]:
         }
     }
 
-    with http_client(timeout=15.0) as client:
-        response = client.post(RCSB_SEARCH_API, json=query)
+    with http_client(timeout=cfg.search_timeout) as client:
+        response = client.post(cfg.search_url, json=query)
 
         # 204 means no results found — not an error
         if response.status_code == 204:
@@ -128,9 +134,10 @@ def _fetch_structure_details(pdb_id: str) -> PDBStructure | None:
     Returns:
         PDBStructure if fetch succeeds, None if entry is unavailable
     """
-    url = f"{RCSB_DATA_API}/{pdb_id.upper()}"
+    cfg = get_config().apis.pdb
+    url = f"{cfg.entry_url}/{pdb_id.upper()}"
 
-    with http_client(timeout=10.0) as client:
+    with http_client(timeout=cfg.entry_timeout) as client:
         response = client.get(url)
 
         # Some PDB IDs in search results may be obsolete or redirected

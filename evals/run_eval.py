@@ -21,6 +21,10 @@ Usage:
     python -m evals.run_eval
     python -m evals.run_eval --targets EGFR TREM2
     python -m evals.run_eval --no-cache
+    python -m evals.run_eval --set agents.reasoning.temperature=0
+
+The resolved config (configs/ plus any --set overrides) is saved in
+results.json, so every run records the settings that produced it.
 """
 import argparse
 import json
@@ -33,6 +37,7 @@ from pathlib import Path
 
 import yaml
 
+from target_atlas.config import config_as_dict, load_config
 from target_atlas.utils.http import enable_cache, http_client
 
 
@@ -274,6 +279,7 @@ def build_markdown(run: dict) -> str:
         f"# Target Atlas eval — {run['started']}",
         "",
         f"Commit `{run['git_commit']}` · model `{run['model']}` · cache `{run['cache']}`",
+        *([f"Overrides: `{' '.join(run['overrides'])}`"] if run.get("overrides") else []),
         "",
         "| Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty |",
         "|---|---|---|---|---|---|---|---|",
@@ -301,13 +307,16 @@ def build_markdown(run: dict) -> str:
 
 
 def _git_commit() -> str:
-    """Short HEAD hash, suffixed with -dirty if src/ or evals/ has uncommitted changes."""
+    """Short HEAD hash, -dirty if code, config or the answer key has uncommitted changes."""
     def git(*args: str) -> str:
         return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout.strip()
 
     try:
         commit = git("rev-parse", "--short", "HEAD")
-        dirty = git("status", "--porcelain", "--", "src", "evals/run_eval.py", "evals/targets.yaml")
+        dirty = git(
+            "status", "--porcelain", "--",
+            "src", "configs", "evals/run_eval.py", "evals/targets.yaml",
+        )
         return f"{commit}-dirty" if dirty else commit
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
@@ -321,12 +330,16 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Run the Target Atlas evaluation harness.")
     parser.add_argument("--targets", nargs="*", help="subset of queries to run, e.g. EGFR TREM2")
     parser.add_argument("--no-cache", action="store_true", help="call live APIs without caching")
+    parser.add_argument(
+        "--set", action="append", default=[], metavar="KEY=VALUE",
+        help="config override, repeatable, e.g. --set agents.reasoning.temperature=0",
+    )
     args = parser.parse_args(argv)
+
+    cfg = load_config(args.set)
 
     if not args.no_cache:
         enable_cache(CACHE_DIR)
-
-    from target_atlas.agents.reasoning_agent import MODEL
 
     targets = yaml.safe_load(TARGETS_FILE.read_text(encoding="utf-8"))["targets"]
     if args.targets:
@@ -370,7 +383,9 @@ def main(argv: list[str] | None = None) -> None:
     run = {
         "started": started.isoformat(timespec="seconds"),
         "git_commit": _git_commit(),
-        "model": MODEL,
+        "model": cfg.agents.reasoning.model,
+        "overrides": args.set,
+        "config": config_as_dict(cfg),
         "cache": "off" if args.no_cache else CACHE_DIR.relative_to(EVALS_DIR.parent).as_posix(),
         "aggregate": aggregate,
         "targets": results,

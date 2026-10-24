@@ -1,0 +1,12 @@
+# Primary config, composed by target_atlas.config.load_config().
+#
+# The two files below are merged under the keys `agents` and `apis`
+# (each starts with a `# @package` line that says where it goes).
+# Override any value from the command line without editing these files:
+#
+#   target-atlas run EGFR --set agents.reasoning.temperature=0
+#   target-atlas eval --set apis.pdb.max_structures=50
+defaults:
+  - agents
+  - apis
+  - _self_

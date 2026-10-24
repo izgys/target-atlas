@@ -1,9 +1,8 @@
 
-from target_atlas.utils.http import http_client
 from pydantic import BaseModel
 
-
-UNIPROT_API = "https://rest.uniprot.org/uniprotkb"
+from target_atlas.config import get_config
+from target_atlas.utils.http import http_client
 
 
 class UniProtResult(BaseModel):
@@ -45,9 +44,10 @@ def _looks_like_uniprot_id(query: str) -> bool:
 
 def _fetch_by_id(uniprot_id: str) -> UniProtResult:
     """Fetch a UniProt entry directly by accession ID."""
-    url = f"{UNIPROT_API}/{uniprot_id.upper()}"
-    
-    with http_client(timeout=10.0) as client:
+    cfg = get_config().apis.uniprot
+    url = f"{cfg.base_url}/{uniprot_id.upper()}"
+
+    with http_client(timeout=cfg.timeout) as client:
         response = client.get(url, params={"format": "json"})
 
         # 400 = malformed accession, 404 = well-formed but no such entry
@@ -65,9 +65,10 @@ def _fetch_by_id(uniprot_id: str) -> UniProtResult:
 
 def _search_by_name(name: str) -> UniProtResult:
     """Search UniProt by protein or gene name, return top reviewed hit."""
-    with http_client(timeout=10.0) as client:
+    cfg = get_config().apis.uniprot
+    with http_client(timeout=cfg.timeout) as client:
         response = client.get(
-            f"{UNIPROT_API}/search",
+            f"{cfg.base_url}/search",
             params={
                 "query": f"gene:{name} AND reviewed:true AND organism_id:9606",
                 "format": "json",

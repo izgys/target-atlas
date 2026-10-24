@@ -3,7 +3,12 @@ Command-line interface for Target Atlas.
 
     target-atlas run EGFR
     target-atlas run P07550 --out reports
-    target-atlas eval --targets EGFR TREM2
+    target-atlas run EGFR --set agents.reasoning.temperature=0
+    target-atlas eval -t EGFR -t TREM2
+
+Settings live in configs/*.yaml and are loaded with Hydra's compose API
+(target_atlas.config). Typer keeps the command line; --set passes Hydra-style
+overrides through, so no setting needs a code edit.
 
 The graph is imported inside each command, not at module level: importing
 LangGraph takes a few seconds and `target-atlas --help` should be instant.
@@ -25,6 +30,8 @@ app = typer.Typer(
 )
 console = Console()
 
+SET_HELP = "Config override, repeatable: --set agents.reasoning.temperature=0"
+
 CONFIDENCE_STYLE = {
     "high": "green", "medium": "yellow", "low": "red", "none": "red", "unknown": "red",
 }
@@ -34,8 +41,10 @@ CONFIDENCE_STYLE = {
 def run(
     target: str = typer.Argument(..., help="Gene name (EGFR) or UniProt accession (P00533)."),
     out: Path = typer.Option(Path("results"), "--out", "-o", help="Folder for report.md and summary.json."),
+    overrides: list[str] = typer.Option(None, "--set", "-s", help=SET_HELP),
 ) -> None:
     """Analyse one target and write report.md + summary.json."""
+    _apply_config(overrides)
     graph = _load_graph()
 
     with console.status(f"Analysing [bold]{target}[/bold] — UniProt, PDB, AlphaFold, ChEMBL, PubMed, Claude..."):
@@ -60,12 +69,15 @@ def run(
 def run_evaluation(
     targets: list[str] = typer.Option(None, "--targets", "-t", help="Subset of eval targets, e.g. -t EGFR -t TREM2."),
     no_cache: bool = typer.Option(False, "--no-cache", help="Call live APIs instead of the evals/cache replay."),
+    overrides: list[str] = typer.Option(None, "--set", "-s", help=SET_HELP),
 ) -> None:
     """Run the evaluation harness (from the repository root)."""
     # The harness and its answer key live in the repository, not in the package
     if not Path("evals/run_eval.py").exists():
         console.print("[red]evals/run_eval.py not found.[/red] Run this command from the repository root.")
         raise typer.Exit(code=1)
+
+    _apply_config(overrides)   # fail fast with a friendly message on a bad override
 
     sys.path.insert(0, str(Path.cwd()))
     with _quiet_imports():
@@ -77,7 +89,23 @@ def run_evaluation(
         argv += ["--targets", *targets]
     if no_cache:
         argv.append("--no-cache")
+    for override in overrides or []:
+        argv += ["--set", override]
     main(argv)
+
+
+def _apply_config(overrides: list[str] | None) -> None:
+    """Load configs/ with --set overrides, or exit with a readable error."""
+    from target_atlas.config import load_config
+
+    try:
+        load_config(overrides)
+    except Exception as e:   # Hydra raises several types for bad keys and syntax
+        # First line only: Hydra's follow-up hint suggests adding the key with '+',
+        # which would turn a typo into a new, unused setting
+        console.print(f"[red]Invalid configuration:[/red] {str(e).splitlines()[0]}")
+        console.print("Check the key names in configs/agents.yaml and configs/apis.yaml.")
+        raise typer.Exit(code=1) from None
 
 
 def _load_graph():

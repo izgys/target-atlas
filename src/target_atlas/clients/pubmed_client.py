@@ -1,11 +1,10 @@
+import time
 from functools import lru_cache
 
-from target_atlas.utils.http import http_client
-import time
 from pydantic import BaseModel
 
-
-EUTILS_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+from target_atlas.config import get_config
+from target_atlas.utils.http import http_client
 
 
 class Publication(BaseModel):
@@ -19,7 +18,7 @@ class Publication(BaseModel):
 
 def fetch_publications(
     gene_name: str,
-    max_results: int = 20,
+    max_results: int | None = None,
 ) -> list[Publication]:
     """
     Fetch recent publications mentioning a gene target from PubMed.
@@ -29,32 +28,39 @@ def fetch_publications(
 
     Args:
         gene_name: gene symbol e.g. 'EGFR'
-        max_results: maximum publications to return (default 20)
+        max_results: maximum publications to return
+                     (default: apis.pubmed.max_results in configs/apis.yaml)
 
     Returns:
         list of Publication objects sorted by date descending
         empty list if no results or API unavailable
     """
+    if max_results is None:
+        max_results = get_config().apis.pubmed.max_results
+
     pmids, _ = _esearch(gene_name, max_results)
 
     if not pmids:
         return []
 
     # Respect NCBI rate limit — 3 requests/second without API key
-    time.sleep(0.4)
+    time.sleep(get_config().apis.pubmed.request_delay)
 
     publications = _efetch(pmids)
     return publications
 
 
-def count_publications(gene_name: str, max_results: int = 20) -> int:
+def count_publications(gene_name: str, max_results: int | None = None) -> int:
     """
     Total number of PubMed hits for the title search used by fetch_publications.
 
     fetch_publications returns only the most recent few; this is the full
     count, which the literature confidence thresholds are defined on.
-    Reuses the cached search response — no extra API call.
+    Reuses the cached search response — no extra API call (max_results must
+    match fetch_publications for the memoised call to be reused).
     """
+    if max_results is None:
+        max_results = get_config().apis.pubmed.max_results
     _, total = _esearch(gene_name, max_results)
     return total
 
@@ -69,10 +75,11 @@ def _esearch(gene_name: str, max_results: int) -> tuple[list[str], int]:
     from papers that mention the gene in passing.
     """
     query = f'"{gene_name}"[Title] AND human[organism]'
+    cfg = get_config().apis.pubmed
 
-    with http_client(timeout=15.0) as client:
+    with http_client(timeout=cfg.timeout) as client:
         response = client.get(
-            f"{EUTILS_BASE}/esearch.fcgi",
+            f"{cfg.base_url}/esearch.fcgi",
             params={
                 "db": "pubmed",
                 "term": query,
@@ -102,10 +109,11 @@ def _efetch(pmids: list[str]) -> list[Publication]:
         list of Publication objects
     """
     ids_str = ",".join(pmids)
+    cfg = get_config().apis.pubmed
 
-    with http_client(timeout=15.0) as client:
+    with http_client(timeout=cfg.timeout) as client:
         response = client.get(
-            f"{EUTILS_BASE}/esummary.fcgi",
+            f"{cfg.base_url}/esummary.fcgi",
             params={
                 "db": "pubmed",
                 "id": ids_str,
@@ -127,7 +135,7 @@ def _efetch(pmids: list[str]) -> list[Publication]:
             publications.append(pub)
 
     # Fetch abstracts separately — ESummary doesn't include them
-    time.sleep(0.4)
+    time.sleep(cfg.request_delay)
     _enrich_abstracts(publications)
 
     return publications
@@ -172,10 +180,11 @@ def _enrich_abstracts(publications: list[Publication]) -> None:
         return
 
     ids_str = ",".join(p.pubmed_id for p in publications)
+    cfg = get_config().apis.pubmed
 
-    with http_client(timeout=20.0) as client:
+    with http_client(timeout=cfg.abstract_timeout) as client:
         response = client.get(
-            f"{EUTILS_BASE}/efetch.fcgi",
+            f"{cfg.base_url}/efetch.fcgi",
             params={
                 "db": "pubmed",
                 "id": ids_str,
