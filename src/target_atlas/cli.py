@@ -70,6 +70,7 @@ def run_evaluation(
     targets: list[str] = typer.Option(None, "--targets", "-t", help="Subset of eval targets, e.g. -t EGFR -t TREM2."),
     no_cache: bool = typer.Option(False, "--no-cache", help="Call live APIs instead of the evals/cache replay."),
     overrides: list[str] = typer.Option(None, "--set", "-s", help=SET_HELP),
+    no_mlflow: bool = typer.Option(False, "--no-mlflow", help="Do not log the run to MLflow (mlruns/)."),
 ) -> None:
     """Run the evaluation harness (from the repository root)."""
     # The harness and its answer key live in the repository, not in the package
@@ -89,6 +90,8 @@ def run_evaluation(
         argv += ["--targets", *targets]
     if no_cache:
         argv.append("--no-cache")
+    if no_mlflow:
+        argv.append("--no-mlflow")
     for override in overrides or []:
         argv += ["--set", override]
     main(argv)

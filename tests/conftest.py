@@ -12,6 +12,7 @@ Two guarantees hold for every test:
 The fake data uses the client models (the objects the graph really carries).
 """
 import json
+import os
 import socket
 from types import SimpleNamespace
 
@@ -23,6 +24,11 @@ from target_atlas.clients.chembl_client import BioactivitySummary, Inhibitor
 from target_atlas.clients.pdb_client import PDBStructure
 from target_atlas.clients.pubmed_client import Publication
 from target_atlas.clients.uniprot_client import UniProtResult
+
+
+# MLflow 3.x sends usage telemetry from a background thread; tests make no
+# network calls of any kind. Set before any test imports mlflow.
+os.environ["MLFLOW_DISABLE_TELEMETRY"] = "true"
 
 
 class NetworkBlockedError(RuntimeError):
@@ -54,6 +60,15 @@ def no_network(monkeypatch):
 @pytest.fixture(autouse=True)
 def no_api_key(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+
+
+@pytest.fixture(autouse=True)
+def no_tracking_uri():
+    # mlflow.set_tracking_uri() writes this variable; clear it before and after
+    # each test so one test's MLflow store never becomes the next one's
+    os.environ.pop("MLFLOW_TRACKING_URI", None)
+    yield
+    os.environ.pop("MLFLOW_TRACKING_URI", None)
 
 
 @pytest.fixture(autouse=True)

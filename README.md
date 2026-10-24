@@ -160,6 +160,14 @@ target-atlas eval                      # all ten targets (run from the repositor
 target-atlas eval -t EGFR -t TREM2     # a subset
 ```
 
+Every run is also logged to a local MLflow store in `mlruns/` (gitignored): the full resolved config as parameters, the git commit and model as tags, the four metrics per target and as means, and the run folder as artifacts. To browse runs and compare them side by side:
+
+```bash
+mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db   # then open http://127.0.0.1:5000
+```
+
+Pass `--no-mlflow` to skip tracking.
+
 **Results** (`claude-sonnet-4-6`, commit `e642589`):
 
 | Target | Identity | Fact recall | PDB | Drugs | PMIDs | Citation validity | Gap honesty |
@@ -314,6 +322,7 @@ target-atlas/
 ├── evals/
 │   ├── targets.yaml                    # expected facts for 10 targets
 │   ├── run_eval.py                     # harness + four metrics
+│   ├── tracking.py                     # MLflow logging (local SQLite store in mlruns/)
 │   └── results/                        # one folder per run
 │
 ├── examples/
@@ -355,7 +364,7 @@ target-atlas/
 - [x] Evaluation harness — 10 targets, four deterministic metrics, cached APIs
 - [x] Typer CLI — `target-atlas run` and `target-atlas eval`
 - [x] Hydra config system — `configs/`, `--set` overrides
-- [ ] MLflow experiment tracking
+- [x] MLflow experiment tracking for eval runs
 - [ ] Dockerfile
 - [x] Smoke tests + GitHub Actions CI (offline)
 - [x] Three benchmark example outputs (EGFR, TREM2, IL-6R)

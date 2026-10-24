@@ -22,9 +22,11 @@ Usage:
     python -m evals.run_eval --targets EGFR TREM2
     python -m evals.run_eval --no-cache
     python -m evals.run_eval --set agents.reasoning.temperature=0
+    python -m evals.run_eval --no-mlflow
 
 The resolved config (configs/ plus any --set overrides) is saved in
-results.json, so every run records the settings that produced it.
+results.json, so every run records the settings that produced it. The run is
+also logged to MLflow (see evals/tracking.py) for side-by-side comparison.
 """
 import argparse
 import json
@@ -334,6 +336,7 @@ def main(argv: list[str] | None = None) -> None:
         "--set", action="append", default=[], metavar="KEY=VALUE",
         help="config override, repeatable, e.g. --set agents.reasoning.temperature=0",
     )
+    parser.add_argument("--no-mlflow", action="store_true", help="do not log the run to MLflow")
     args = parser.parse_args(argv)
 
     cfg = load_config(args.set)
@@ -399,6 +402,15 @@ def main(argv: list[str] | None = None) -> None:
     print()
     print(markdown)
     print(f"Saved to {run_dir}")
+
+    # After the files are written: a tracking problem must never cost the results
+    if not args.no_mlflow:
+        try:
+            from evals.tracking import log_eval_run, tracking_uri
+            run_id = log_eval_run(run, run_dir)
+            print(f"Logged to MLflow: run {run_id} ({tracking_uri()})")
+        except Exception as e:
+            print(f"Warning: MLflow logging failed, results are still in {run_dir}: {e}")
 
 
 if __name__ == "__main__":
