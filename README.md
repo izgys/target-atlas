@@ -1,7 +1,9 @@
 # Target Atlas — An LLM workflow for protein target analysis in drug discovery
 
+[![CI](https://github.com/izgys/target-atlas/actions/workflows/ci.yml/badge.svg)](https://github.com/izgys/target-atlas/actions/workflows/ci.yml)
+
 **Author:** Iker Zapirain Gysling  
-**Status:** Active development — v0.1  
+**Status:** v0.1 released · v0.2 planned (see Roadmap)  
 **Domain:** Drug Discovery · Structural Bioinformatics · Applied LLMs
 
 ---
@@ -22,6 +24,7 @@ target-atlas run EGFR
 - Honest uncertainty — evidence gaps explicitly enumerated, not silently omitted
 - Measured, not asserted — a deterministic evaluation harness scores every change against API-verified facts for ten targets
 - Resilient retrieval — shared HTTP layer with retries and backoff, plus an on-disk cache for reproducible evaluation runs
+- Reproducible by construction — Hydra config, MLflow-tracked eval runs reported as mean ± SD over repeats, offline tests in CI, and a Docker image
 
 ---
 
@@ -115,7 +118,7 @@ A sequential script is simpler but fragile — a single API failure aborts the e
 Encapsulation. Each client knows everything about one external API and nothing about the pipeline it serves. If PDB changes their API (as RCSB has done twice), only `pdb_client.py` changes — no node code is touched. This was validated during development when both the AlphaFold API (field rename: `meanPlddt` → `globalMetricValue`) and ChEMBL API (endpoint rename: `drug_mechanism` → `mechanism`) changed mid-build.
 
 **Why Claude API for the reasoning node rather than a local model?**
-The reasoning node requires multi-source synthesis, uncertainty quantification, and structured output — tasks where frontier models significantly outperform smaller local models at this stage. The tradeoff is cost and latency per run. A local model (Llama, Mistral) is a planned v0.2 option for offline or cost-sensitive deployments.
+The reasoning node requires multi-source synthesis, explicit handling of missing evidence, and structured output — tasks where frontier models significantly outperform smaller local models at this stage. The tradeoff is cost and latency per run. A local model (Llama, Mistral) is a planned v0.2 option for offline or cost-sensitive deployments.
 
 **Why AlphaFold unconditionally, not only as a PDB fallback?**
 The two sources are complementary, not alternatives. When PDB structures exist, AlphaFold provides a confidence cross-check — high pLDDT corroborating experimental coverage strengthens the structural confidence assessment. The discordant case (experimental structures present, low pLDDT in a specific region) is scientifically informative: it flags disordered regions that crystal structures may have failed to resolve.
@@ -210,6 +213,7 @@ Structural, chemical, and literature confidence are each scored independently on
 - **No biologics in the chemical rubric**: chemical confidence is defined on small-molecule IC50 counts, so antibody-only targets (IL6R) fall outside it.
 - **"Ligand-bound" includes ions and glycans**: any non-polymer entity counts as a ligand, which overstates small-molecule structural evidence.
 - **Fragment structures rank as "best"**: PDB entries are ranked by resolution only, with no check of how much of the target they contain. For ADRB2 (outside the eval set), the reported best structure, 1GQ4 at 1.9 Å, is a NHERF PDZ domain bound to a short ADRB2 tail peptide; the best receptor structure is 2RH1 at 2.4 Å. Peptide and fragment complexes can inflate structural confidence and crowd real structures out of the top 20.
+- **Median IC50 from a sample**: the IC50 count covers all ChEMBL entries, but the median is computed from the first 2,000 values only (`apis.chembl.max_activities`), and the reasoning context does not say so. For EGFR, Claude reports the median "across all 26,600 entries", which overstates what was measured.
 - **IC50-only chemistry**: bioactivity counts and the median use IC50 values only. Kinase data is mostly IC50, but GPCR and nuclear-receptor data is mostly Ki, EC50 or Kd (ADRB2: 1,665 IC50 vs 1,862 Ki entries), so chemical evidence is systematically undercounted for non-enzyme target classes.
 - **AlphaFold per-residue mapping**: the current API returns pre-computed confidence fractions, not per-residue scores. Binding-site-specific confidence assessment requires a second API call to the confidence JSON endpoint — planned for v0.2.
 - **Human targets only**: UniProt search is currently restricted to `organism_id:9606`. Non-human targets require manual UniProt ID input.
@@ -338,7 +342,7 @@ target-atlas/
 │
 ├── src/
 │   └── target_atlas/
-│       ├── state.py                    # TargetAtlasState TypedDict + Pydantic models
+│       ├── state.py                    # TargetAtlasState + assessment schema
 │       ├── graph.py                    # LangGraph graph definition
 │       ├── cli.py                      # Typer CLI: run, eval
 │       ├── config.py                   # load_config() / get_config()
@@ -351,17 +355,17 @@ target-atlas/
 │       ├── utils/
 │       │   └── http.py                 # shared HTTP client: retries + eval cache
 │       └── clients/
-│           ├── uniprot_client.py       # ✓ implemented
-│           ├── pdb_client.py           # ✓ implemented
-│           ├── alphafold_client.py     # ✓ implemented
-│           ├── chembl_client.py        # ✓ implemented
-│           └── pubmed_client.py        # ✓ implemented
+│           ├── uniprot_client.py       # one client per API, no pipeline knowledge
+│           ├── pdb_client.py
+│           ├── alphafold_client.py
+│           ├── chembl_client.py
+│           └── pubmed_client.py
 │
 ├── evals/
 │   ├── targets.yaml                    # expected facts for 10 targets
 │   ├── run_eval.py                     # harness + four metrics
 │   ├── tracking.py                     # MLflow logging (local SQLite store in mlruns/)
-│   └── results/                        # one folder per run
+│   └── results/                        # one folder per run (see its README)
 │
 ├── examples/
 │   ├── egfr_P00533/                    # report.md + summary.json
@@ -374,10 +378,10 @@ target-atlas/
 │   ├── test_nodes.py
 │   ├── test_graph.py
 │   ├── test_http.py
-│   └── test_config.py
-│
-├── notebooks/
-│   └── 01_system_walkthrough.ipynb    # coming v0.1
+│   ├── test_config.py
+│   ├── test_tracking.py
+│   ├── test_repeats.py
+│   └── helpers.py
 │
 └── .github/
     └── workflows/
@@ -388,7 +392,7 @@ target-atlas/
 
 ## Roadmap
 
-**v0.1 (in progress)**
+**v0.1 (released)**
 - [x] Project scaffold, dependencies, pyproject.toml
 - [x] State schema — TargetAtlasState TypedDict + all Pydantic models
 - [x] UniProt client — name and ID resolution
@@ -409,19 +413,34 @@ target-atlas/
 - [x] Three benchmark example outputs (EGFR, TREM2, IL-6R)
 
 **v0.2 (planned)**
-- [ ] Parallel node execution (structure + literature nodes concurrently)
+
+*Fixes for the known failure modes*
+- [ ] Salt form deduplication in ChEMBL approved drugs
+- [ ] Second bioactivity source (e.g. BindingDB or PubChem BioAssay) for targets with no ChEMBL activities
+- [ ] Relevance-ranked literature retrieval alongside the most recent papers, so landmark papers are not missed
+- [ ] Literature search with UniProt aliases and protein names (PD-L1, β2-adrenergic receptor), not only the gene symbol
+- [ ] Prompt rule for failed sources — score the dimension `none` and state any prior-knowledge expectation separately
+- [ ] Stable verdicts on borderline targets (TREM2): sharper sparse-target thresholds in the rubric, or a majority vote over several reasoning samples
+- [ ] Biologics and modality in the chemical rubric, so antibody-only targets (IL6R) are scored on their evidence
+- [ ] Ligand filter — exclude ions, glycans and buffer molecules from "ligand-bound" structure counts
+- [ ] Structure coverage filter — rank PDB entries by target-residue coverage (SIFTS) so peptide and fragment complexes no longer count as best structures
+- [ ] Median IC50 over all activities, or the sample size stated in the reasoning context
+- [ ] pChEMBL-based chemistry — count IC50, Ki, Kd and EC50 activities on one scale, so non-kinase target classes are not undercounted
 - [ ] Per-residue pLDDT mapping via AlphaFold confidence endpoint
+- [ ] Non-human organism support
+
+*Evaluation and usability*
+- [ ] Held-out evaluation set outside the kinase-heavy ten (e.g. ADRB2, ESR1) and UniProt-ID queries
+- [ ] Benchmarking against expert druggability consensus (published targets)
+- [ ] Walkthrough notebook and visual summaries of the evidence in reports
+- [ ] Rename `literature_agent` to `evidence_agent` and drop the `*_agent` file names (the workflow has no agents)
+
+*Extensions*
+- [ ] Parallel node execution (structure + literature nodes concurrently)
 - [ ] Europe PMC as third literature source
 - [ ] Pocket detection integration (fpocket) for structural druggability
 - [ ] ChromaDB persistent memory for cross-target comparison
-- [ ] Benchmarking against expert druggability consensus (published targets)
-- [ ] Salt form deduplication in ChEMBL approved drugs
-- [ ] Structure coverage filter — rank PDB entries by target-residue coverage (SIFTS) so peptide and fragment complexes no longer count as best structures
-- [ ] pChEMBL-based chemistry — count IC50, Ki, Kd and EC50 activities on one scale, so non-kinase target classes are not undercounted
-- [ ] Prompt rule for failed sources — score the dimension `none` and state any prior-knowledge expectation separately
-- [ ] Stable verdicts on borderline targets (TREM2): sharper sparse-target thresholds in the rubric, or a majority vote over several reasoning samples
-- [ ] Held-out evaluation set outside the kinase-heavy ten (e.g. ADRB2, ESR1) and UniProt-ID queries
-- [ ] Non-human organism support
+- [ ] Local model option for the reasoning node (offline or cost-sensitive use)
 
 ---
 
